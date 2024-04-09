@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+
+    <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}"> -->
+    <style>
+        body {
+            background-color: #252422;
+        }
+
+        .login-box {
+            width: 300px;
+            margin: 50px auto 0 auto;
+            padding: 20px;
+            background-color: #CCC5B9;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .button {
+            background-color: #EB5E28;
+            color: #fff;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .button:hover { /* changes to this background color and text color on hover */
+            background-color: #252422;
+            color: #FFFCF2;
+        }
+
+        label {
+            color: #252422;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="submit"] {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .alert {
+            padding: 15px;
+            background-color: #EB5E28;
+            color: white;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            width: 50%;
+            margin: 20px auto 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+    <h2>Register Account</h2>
+    <form action="/register" method="post">
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username"><br>
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password"><br><br>
+        <input type="submit" value="Register" class="button">
+    </form>
+    </div>
+</body>
+</html>
