@@ -122,5 +122,15 @@ def dashboard():
 	# needs code probably
 	return render_template('dashboard.html') #need to pass needed variables
 
+@app.route('/addgroup')
+@login_required
+def addgroup():
+	return render_template('addgroup.html')
+
+@app.route('/addcharacter')
+@login_required
+def addcharacter():
+	return render_template('addcharacter.html')
+
 if __name__ == '__main__':
 	app.run(debug=True)
