@@ -22,29 +22,33 @@ def load_user(id):
 class Account(UserMixin, db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	username = db.Column(db.String(80), unique=True, nullable=False)
+	email = db.Column(db.String(80), nullable=False)
 	password = db.Column(db.String(80), nullable=False)
 
 class Group(db.Model):
-	id = db.Column(db.Integer, primary_key=True)
-	groupName = db.Column(db.String(80), nullable=False)
-	groupDetails = db.Column(db.String(500), nullable=True)
-	# groupLogFilePath = db.Column(db.String(500), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    # accountID = db.Column(db.Integer, nullable=False) # foreign key
+    groupName = db.Column(db.String(80), nullable=False)
+    groupDetails = db.Column(db.String(500), nullable=True)
+    # groupLogFilePath = db.Column(db.String(500), nullable=False)
+    playerList = db.Column(db.String(500), nullable=True)
 
 class Player(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
-	accountID = db.Column(db.Integer, nullable=False)
-	groupID = db.Column(db.Integer, nullable=False)
-	currentCharacterID = db.Column(db.Integer, nullable=True)
+	# groupID = db.Column(db.Integer, nullable=False) # foreign id 1
+	# currentCharacterID = db.Column(db.Integer, nullable=True) # playerID + characterID // foreign key 2
 	noteContent = db.Column(db.String(500), nullable=True)
 
 class GameMaster(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
-	accountID = db.Column(db.Integer, nullable=False)
-	groupID = db.Column(db.Integer, nullable=False)
+	# accountID = db.Column(db.Integer, nullable=False) # foriegn key 1
+	# groupID = db.Column(db.Integer, nullable=False) # foreign key 2
 	noteContent = db.Column(db.String(500), nullable=True)
 
 class Character(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
+	# accountID = db.Column(db.Integer, nullable=False) # foreign key 1
+ 	# playerID = db.Column(db.Integer, nullable=False) # foreign key 2
 	name = db.Column(db.String(80), nullable=False)
 	bio = db.Column(db.String(500), nullable=True)
 	image = db.Column(db.String(80), nullable=True) #file for saved img path probably
@@ -52,15 +56,16 @@ class Character(db.Model):
 
 class Stats(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
-	characterID = db.Column(db.Integer, nullable=False) # foreign key
-	title = db.Column(db.String(80), nullable=False)
+	# characterID = db.Column(db.Integer, nullable=False) # foreign key
+	statName = db.Column(db.String(80), nullable=False)
 	diceAmount = db.Column(db.Integer, nullable=True)
 	diceFaceValue = db.Column(db.Integer, nullable=True)
+	statNumericValue = db.Column(db.Integer, nullable=True)
 
 class UniqueField(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
-	characterID = db.Column(db.Integer, nullable=False) # foreign key
-	title = db.Column(db.String(80), nullable=False)
+	# characterID = db.Column(db.Integer, nullable=False) # foreign key
+	fieldName = db.Column(db.String(80), nullable=False)
 	details = db.Column(db.String(500), nullable=True)
 	diceAmount = db.Column(db.Integer, nullable=True)
 	diceFaceValue = db.Column(db.Integer, nullable=True)
@@ -76,9 +81,10 @@ def index():
 def register():
 	if request.method == 'POST':
 		username = request.form['username']
+		email = request.form['email']
 		password = request.form['password'] # may want to hash the password
 
-		new_account = Account(username=username, password=password)
+		new_account = Account(username=username, email=email, password=password)
 		db.session.add(new_account)
 		db.session.commit()
 
@@ -107,8 +113,8 @@ def login():
 @app.route('/database')
 def database():
 	accounts = Account.query.all()
-	#groups = Group.query.all()
-	return render_template('database.html', accounts=accounts) #groups=groups
+	groups = Group.query.all()
+	return render_template('database.html', accounts=accounts, groups=groups)
 
 @app.route('/logout')
 @login_required
