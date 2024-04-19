@@ -34,32 +34,35 @@ class Group(db.Model):
     # groupLogFilePath = db.Column(db.String(500), nullable=False) [not implemented]
     playerList = db.Column(db.String(500), nullable=True)
     players = db.relationship("Player", backref='group', lazy=True)
+    # FKs for GameMaster only works if I comment this out @-@
+    #gameMaster = db.relationship("GameMaster", backref='group', uselist=False, lazy=True)
 
 class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     groupID = db.Column(db.Integer, db.ForeignKey('group.id'), nullable=False)
-    # currentCharacterID = db.Column(db.Integer, nullable=True) # playerID + characterID // foreign key 2
     noteContent = db.Column(db.String(500), nullable=True)
+    characters = db.relationship('Character', backref='player', lazy=True)
 
 class GameMaster(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    # accountID = db.Column(db.Integer, nullable=False) # foriegn key 1
-    # groupID = db.Column(db.Integer, nullable=False) # foreign key 2
+    accountID = db.Column(db.Integer, db.ForeignKey('group.accountID'), nullable=False)
+    groupID = db.Column(db.Integer, db.ForeignKey('group.id'), nullable=False)
     noteContent = db.Column(db.String(500), nullable=True)
 
 class Character(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     accountID = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
-    # playerID = db.Column(db.Integer, nullable=False) # foreign key 2
+    playerID = db.Column(db.Integer, db.ForeignKey('player.id'), nullable=False)
     name = db.Column(db.String(80), nullable=False)
     bio = db.Column(db.String(500), nullable=True)
     image = db.Column(db.String(80), nullable=True) #file for saved img path probably
     # inventory = array or something?
     uniqueFields = db.relationship("UniqueField", backref='character', lazy=True)
+    stats = db.relationship("Stats", backref='character', lazy=True)
 
 class Stats(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    # characterID = db.Column(db.Integer, nullable=False) # foreign key
+    characterID = db.Column(db.Integer, db.ForeignKey('character.id'), nullable=False)
     statName = db.Column(db.String(80), nullable=False)
     diceAmount = db.Column(db.Integer, nullable=True)
     diceFaceValue = db.Column(db.Integer, nullable=True)
