@@ -36,6 +36,7 @@
         <thead>
             <tr>
                 <th>ID</th>
+                <th>FK</th>
                 <th>Name</th>
             </tr>
         </thead>
@@ -43,6 +44,7 @@
             {% for group in groups %}
             <tr>
                 <td>{{ group.id }}</td>
+                <td>{{ group.accountID }} </td>
                 <td>{{ group.name }}</td>
             </tr>
             {% endfor %}
@@ -54,6 +56,7 @@
         <thead>
             <tr>
                 <th>ID</th>
+                <th>FK1</th>
                 <th>noteContent</th>
             </tr>
         </thead>
@@ -61,6 +64,7 @@
             {% for player in players %}
             <tr>
                 <td>{{ player.id }}</td>
+                <td>{{ player.groupID }}</td>
                 <td>{{ player.noteContent }}</td>
             </tr>
             {% endfor %}
@@ -90,6 +94,7 @@
         <thead>
             <tr>
                 <th>ID</th>
+                <th>FK1</th>
                 <th>name</th>
                 <th>bio</th>
                 <th>image</th>
@@ -99,6 +104,7 @@
             {% for character in characters %}
             <tr>
                 <td>{{ character.id }}</td>
+                <td>{{ character.accountID }}</td>
                 <td>{{ character.name }}</td>
                 <td>{{ character.bio }}</td>
                 <td>{{ character.image }}</td>
@@ -136,6 +142,7 @@
         <thead>
             <tr>
                 <th>ID</th>
+                <th>FK</th>
                 <th>fieldName</th>
                 <th>details</th>
                 <th>diceAmount</th>
@@ -146,6 +153,7 @@
             {% for uniqueField in uniqueFields %}
             <tr>
                 <td>{{ uniqueField.id }}</td>
+                <td>{{ uniqueField.characterID }}</td>
                 <td>{{ uniqueField.fieldName }}</td>
                 <td>{{ uniqueField.details }}</td>
                 <td>{{ uniqueField.diceAmount }}</td>
