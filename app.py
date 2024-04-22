@@ -120,7 +120,12 @@ def login():
 def database():
     accounts = Account.query.all()
     groups = Group.query.all()
-    return render_template('database.html', accounts=accounts, groups=groups)
+    players = Player.query.all()
+    gameMasters = GameMaster.query.all()
+    characters = Character.query.all()
+    statistics = Stats.query.all()
+    uniqueFields = UniqueField.query.all()
+    return render_template('database.html', accounts=accounts, groups=groups, players=players, gameMasters=gameMasters, characters=characters, statistics=statistics, uniqueFields=uniqueFields)
 
 @app.route('/logout')
 @login_required
