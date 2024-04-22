@@ -38,6 +38,7 @@
                 <th>ID</th>
                 <th>FK</th>
                 <th>Name</th>
+                <th>Details</th>
             </tr>
         </thead>
         <tbody>
@@ -45,7 +46,8 @@
             <tr>
                 <td>{{ group.id }}</td>
                 <td>{{ group.accountID }} </td>
-                <td>{{ group.name }}</td>
+                <td>{{ group.groupName }}</td>
+                <td>{{ group.groupDetails }}</td>
             </tr>
             {% endfor %}
         </tbody>
