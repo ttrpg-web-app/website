@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_required, current_user, login_user, logout_user, current_user
 import sqlite3
@@ -107,9 +107,10 @@ def login():
         user = Account.query.filter_by(username=username).first()
 
         if user and user.password == password:
-            # login success
-            login_user(user)
-            return redirect(url_for('index')) # change from index to dashboard later
+            # login success 
+            session['username'] = request.form['username'] #save username for session        
+            login_user(user)   
+            return redirect(url_for('dashboard')) # change from index to dashboard later
         else: # user/pass do not exist in db
             error = 'Invalid username or password'
             return render_template('login.html', error=error)
@@ -130,6 +131,7 @@ def database():
 @app.route('/logout')
 @login_required
 def logout():
+    session.pop("username", None) #removed saved username for this session
     logout_user()
     return redirect(url_for('index'))
 
@@ -139,9 +141,26 @@ def dashboard():
     # needs code probably
     return render_template('dashboard.html') #need to pass needed variables
 
-@app.route('/addgroup')
+@app.route('/addgroup', methods=['GET', 'POST'])
 @login_required
 def addgroup():
+    if request.method == 'POST':
+        groupName = request.form['name']
+        groupDetails = request.form['details']
+        playerList= session['username'] #get saved username for session        
+        user = Account.query.filter_by(username=playerList).first() #uses saved username to find userID
+        accountID = user.id
+        new_group = Group(accountID=accountID, groupName=groupName, groupDetails=groupDetails, playerList=playerList) 
+        db.session.add(new_group) #add new group to db
+        db.session.commit()
+
+        group_ID_Num = Group.query.filter_by(groupName=groupName, accountID=accountID).first() #searches for  using groupName and accountID
+        groupID = group_ID_Num.id #get groupID number
+        new_gameMaster = GameMaster(accountID=accountID,groupID=groupID)
+        db.session.add(new_gameMaster) #add new gameMaster to db
+        db.session.commit()
+
+        return redirect(url_for('dashboard'))
     return render_template('addgroup.html')
 
 @app.route('/addcharacter')
