@@ -35,7 +35,7 @@ class Group(db.Model):
     playerList = db.Column(db.String(500), nullable=True)
     players = db.relationship("Player", backref='group', lazy=True)
     # FKs for GameMaster only works if I comment this out @-@
-    gameMaster = db.relationship("GameMaster", backref='group', uselist=False, lazy=True)
+    #gameMaster = db.relationship("GameMaster", backref='group', uselist=False, lazy=True)
 
 class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
