@@ -1,13 +1,13 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_required, current_user, login_user, logout_user, current_user
 import sqlite3
-
+import os
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'abcdefghijklmnopqrstuvwxyz'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-
+app.config['UPLOAD_FOLDER'] = 'uploads'
 db = SQLAlchemy(app)
 
 login_manager = LoginManager()
@@ -44,11 +44,13 @@ class GameMaster(db.Model):
 	noteContent = db.Column(db.String(500), nullable=True)
 
 class Character(db.Model):
-	id = db.Column(db.Integer, primary_key=True)
-	name = db.Column(db.String(80), nullable=False)
-	bio = db.Column(db.String(500), nullable=True)
-	image = db.Column(db.String(80), nullable=True) #file for saved img path probably
-	# inventory = array or something?
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    bio = db.Column(db.String(500), nullable=True)
+    image = db.Column(db.String(80), nullable=True)
+    account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
+    account = db.relationship('Account', backref=db.backref('characters', lazy=True))
+
 
 class Stats(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -107,8 +109,9 @@ def login():
 @app.route('/database')
 def database():
 	accounts = Account.query.all()
+	characters = Character.query.all()
 	#groups = Group.query.all()
-	return render_template('database.html', accounts=accounts) #groups=groups
+	return render_template('database.html', accounts=accounts, characters= characters) #groups=groups
 
 @app.route('/logout')
 @login_required
@@ -127,10 +130,29 @@ def dashboard():
 def addgroup():
 	return render_template('addgroup.html')
 
-@app.route('/addcharacter')
+@app.route('/addcharacter',methods = ['POST', 'GET'] )
 @login_required
 def addcharacter():
+	if(request.method == 'POST'):
+		name= request.form['name']
+		bio = request.form['bio']
+		image = request.files['image']
+		if 'image' not in request.files:
+			flash('No file part')
+			return redirect('addcharacter.html')
+		if image.filename == '':
+			flash('The file name is empty')
+			return redirect('addcharacter.html')
+		if image:
+			image.save(os.path.join(app.config['UPLOAD_FOLDER'], image.filename))
+			new_character = Character(name=name, bio=bio, image=image.filename)
+			db.session.add(new_character),
+			db.session.commit()
+			return render_template('addcharacter.html')
+	
 	return render_template('addcharacter.html')
+		
+
 
 if __name__ == '__main__':
 	app.run(debug=True)

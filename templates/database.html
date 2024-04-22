@@ -63,5 +63,27 @@
             {% endfor %}
         </tbody>
     </table>
+    <h2>Character</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>name</th>
+                <th>bio</th>
+                <th>image</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for character in characters %}
+            <tr>
+                <td>{{ character.account_id}}</td>
+                <td>{{ character.id }}</td>
+                <td>{{ character.name }}</td>
+                <td>{{ character.bio }}</td>
+                <td>{{ character.image}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>
