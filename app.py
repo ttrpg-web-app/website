@@ -150,7 +150,7 @@ def addgroup():
         db.session.commit()
 
         group_ID_Num = Group.query.filter_by(groupName=groupName, accountID=accountID).first() #searches for  using groupName and accountID
-        groupID = (str(group_ID_Num.id) + str(accountID)) #concates groupID and accountID to create groupID
+        groupID = group_ID_Num.id #get groupID number
         new_gameMaster = GameMaster(accountID=accountID,groupID=groupID)
         db.session.add(new_gameMaster) #add new gameMaster to db
         db.session.commit()
