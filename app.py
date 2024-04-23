@@ -23,7 +23,7 @@ class Account(UserMixin, db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	username = db.Column(db.String(80), unique=True, nullable=False)
 	password = db.Column(db.String(80), nullable=False)
-
+	
 class Group(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	groupName = db.Column(db.String(80), nullable=False)
@@ -137,6 +137,7 @@ def addcharacter():
 		name= request.form['name']
 		bio = request.form['bio']
 		image = request.files['image']
+		account_id = current_user.id
 		if 'image' not in request.files:
 			flash('No file part')
 			return redirect('addcharacter.html')
@@ -145,7 +146,7 @@ def addcharacter():
 			return redirect('addcharacter.html')
 		if image:
 			image.save(os.path.join(app.config['UPLOAD_FOLDER'], image.filename))
-			new_character = Character(name=name, bio=bio, image=image.filename)
+			new_character = Character(name=name, bio=bio, image=image.filename, account_id = account_id)
 			db.session.add(new_character),
 			db.session.commit()
 			return render_template('addcharacter.html')
