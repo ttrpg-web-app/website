@@ -34,8 +34,7 @@ class Group(db.Model):
     # groupLogFilePath = db.Column(db.String(500), nullable=False) [not implemented]
     playerList = db.Column(db.String(500), nullable=True)
     players = db.relationship("Player", backref='group', lazy=True)
-    # FKs for GameMaster only works if I comment this out @-@
-    #gameMaster = db.relationship("GameMaster", backref='group', uselist=False, lazy=True)
+    gameMaster = db.relationship("GameMaster", backref='group1', uselist=False, lazy=True)
 
 class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -46,7 +45,7 @@ class Player(db.Model):
 class GameMaster(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     accountID = db.Column(db.Integer, db.ForeignKey('group.accountID'), nullable=False)
-    groupID = db.Column(db.Integer, db.ForeignKey('group.id'), nullable=False)
+    groupID = db.Column(db.Integer, db.ForeignKey('group1.id'), nullable=False)
     noteContent = db.Column(db.String(500), nullable=True)
 
 class Character(db.Model):
