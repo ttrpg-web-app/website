@@ -34,7 +34,8 @@ class Group(db.Model):
     # groupLogFilePath = db.Column(db.String(500), nullable=False) [not implemented]
     playerList = db.Column(db.String(500), nullable=True)
     players = db.relationship("Player", backref='group', lazy=True)
-    gameMaster = db.relationship("GameMaster", backref='group1', uselist=False, lazy=True)
+    # FKs for GameMaster only works if I comment this out @-@
+    #gameMaster = db.relationship("GameMaster", backref='group', uselist=False, lazy=True)
 
 class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -45,7 +46,7 @@ class Player(db.Model):
 class GameMaster(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     accountID = db.Column(db.Integer, db.ForeignKey('group.accountID'), nullable=False)
-    groupID = db.Column(db.Integer, db.ForeignKey('group1.id'), nullable=False)
+    groupID = db.Column(db.Integer, db.ForeignKey('group.id'), nullable=False)
     noteContent = db.Column(db.String(500), nullable=True)
 
 class Character(db.Model):
@@ -120,12 +121,7 @@ def login():
 def database():
     accounts = Account.query.all()
     groups = Group.query.all()
-    players = Player.query.all()
-    gameMasters = GameMaster.query.all()
-    characters = Character.query.all()
-    statistics = Stats.query.all()
-    uniqueFields = UniqueField.query.all()
-    return render_template('database.html', accounts=accounts, groups=groups, players=players, gameMasters=gameMasters, characters=characters, statistics=statistics, uniqueFields=uniqueFields)
+    return render_template('database.html', accounts=accounts, groups=groups)
 
 @app.route('/logout')
 @login_required
@@ -138,10 +134,9 @@ def logout():
 @login_required
 def dashboard():
     # needs code probably
-<<<<<<< HEAD
     if request.method == 'POST':
-        session['groupID'] = request.form['groups.id'] # for some reason it just returns None
-        print(session['groupID'])
+        session['group'] = request.form['groups'] # for some reason it just returns None
+        print(session['group'])
         return redirect(url_for('viewgroup')) # GROUP PAGE DOES NOT EXIT YET
     else:
         groups = Group.query.filter_by(accountID=current_user.id)
@@ -153,9 +148,6 @@ def viewgroup():
     # code...
     selectedGroup = session['selectedGroup']
     return render_template('viewgroup.html', selectedGroup=selectedGroup)
-=======
-    return render_template('dashboard.html') #need to pass needed variables
->>>>>>> origin/main
 
 @app.route('/addgroup', methods=['GET', 'POST'])
 @login_required
@@ -171,7 +163,7 @@ def addgroup():
         db.session.commit()
 
         group_ID_Num = Group.query.filter_by(groupName=groupName, accountID=accountID).first() #searches for  using groupName and accountID
-        groupID = group_ID_Num.id #get groupID number
+        groupID = (str(group_ID_Num.id) + str(accountID)) #concates groupID and accountID to create groupID
         new_gameMaster = GameMaster(accountID=accountID,groupID=groupID)
         db.session.add(new_gameMaster) #add new gameMaster to db
         db.session.commit()
