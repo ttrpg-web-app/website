@@ -72,6 +72,7 @@
             {% endfor %}
         </tbody>
     </table>
+<<<<<<< HEAD
 
     <h2>GameMaster</h2>
     <table border="1">
@@ -95,13 +96,20 @@
         </tbody>
     </table>
 
+=======
+>>>>>>> Paul
     <h2>Character</h2>
     <table border="1">
         <thead>
             <tr>
+<<<<<<< HEAD
                 <th>ID</th>
                 <th>FK1</th>
                 <th>FK2</th>
+=======
+                <th>ID2</th>
+                <th>ID</th>
+>>>>>>> Paul
                 <th>name</th>
                 <th>bio</th>
                 <th>image</th>
@@ -110,16 +118,25 @@
         <tbody>
             {% for character in characters %}
             <tr>
+<<<<<<< HEAD
                 <td>{{ character.id }}</td>
                 <td>{{ character.accountID }}</td>
                 <td>{{ character.playerID }}</td>
                 <td>{{ character.name }}</td>
                 <td>{{ character.bio }}</td>
                 <td>{{ character.image }}</td>
+=======
+                <td>{{ character.account_id}}</td>
+                <td>{{ character.id }}</td>
+                <td>{{ character.name }}</td>
+                <td>{{ character.bio }}</td>
+                <td>{{ character.image}}</td>
+>>>>>>> Paul
             </tr>
             {% endfor %}
         </tbody>
     </table>
+<<<<<<< HEAD
 
     <h2>Stats</h2>
     <table border="1">
@@ -173,5 +190,7 @@
         </tbody>
     </table>
     
+=======
+>>>>>>> Paul
 </body>
 </html>
