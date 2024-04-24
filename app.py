@@ -116,11 +116,24 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
-@app.route('/dashboard')
+@app.route('/dashboard', methods=['GET', 'POST']) # specifically account background
 @login_required
 def dashboard():
-	# needs code probably
-	return render_template('dashboard.html') #need to pass needed variables
+    # needs code probably
+    if request.method == 'POST':
+        session['groupID'] = request.form['groups.id'] # for some reason it just returns None
+        print(session['groupID'])
+        return redirect(url_for('viewgroup')) # GROUP PAGE DOES NOT EXIT YET
+    else:
+        groups = Group.query.filter_by(accountID=current_user.id)
+        return render_template('dashboard.html', groups=groups, name=current_user.username)
+
+@app.route('/viewgroup')
+@login_required
+def viewgroup():
+    # code...
+    selectedGroup = session['selectedGroup']
+    return render_template('viewgroup.html', selectedGroup=selectedGroup)
 
 @app.route('/addgroup')
 @login_required

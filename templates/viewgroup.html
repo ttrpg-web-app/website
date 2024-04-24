@@ -63,29 +63,12 @@
         </style>
     </head>
     <body>
-        <!-- oops this broke the page if user was not logged in
-            probably because {{ name }} couldn't be retrieved
-            and it would still attempt it even if it wouldn't load to show this -->
-        {% if current_user.is_authenticated %}
+        
         <h1 class="title">
-            Welcome, {{ name }}!
+            Welcome to {{ selectedGroup.groupName }}!
+            {{ selectedGroup.id }}
+            <a href="/dashboard"><button class="button">return to dashboard</button></a>
         </h1>
-        {% endif %}
-
-        <div class="options-box">
-        <h2>Account Dashboard</h2>
-        <h3>Select Group:</h3>
-
-        <form method="POST" action="/dashboard">
-            <select name=groups method="GET" action="/dashboard">
-                {% for groups in groups %}
-                <option value= "{{groups.id}}" SELECTED>{{groups.groupName}}</option>"
-                {% endfor %}
-            </select>
-            <input type="submit" class="button" value ="go to group">
-
-            <a href="/index.html"><button class="button">return to home</button></a>
-        </form>
 
         </div>
     </body>
