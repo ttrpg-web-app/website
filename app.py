@@ -61,7 +61,7 @@ class Character(db.Model):
     uniqueFields = db.relationship("UniqueField", backref='character', lazy=True)
     stats = db.relationship("Stats", backref='character', lazy=True)
     # account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
-    account = db.relationship('Account', backref=db.backref('characters', lazy=True))
+    # account = db.relationship('Account', backref=db.backref('characters', lazy=True))
 
 
 class Stats(db.Model):
