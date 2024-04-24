@@ -8,12 +8,14 @@
 </head>
 <body>
     <h1>Database Contents</h1>
+
     <h2>Accounts</h2>
     <table border="1">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Username</th>
+                <th>Email</th>
                 <th>Password</th>
             </tr>
         </thead>
@@ -22,46 +24,154 @@
             <tr>
                 <td>{{ account.id }}</td>
                 <td>{{ account.username }}</td>
+                <td>{{ account.email }}</td>
                 <td>{{ account.password }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+
     <h2>Groups</h2>
     <table border="1">
         <thead>
             <tr>
                 <th>ID</th>
+                <th>FK</th>
                 <th>Name</th>
+                <th>Details</th>
             </tr>
         </thead>
         <tbody>
             {% for group in groups %}
             <tr>
                 <td>{{ group.id }}</td>
-                <td>{{ group.name }}</td>
+                <td>{{ group.accountID }} </td>
+                <td>{{ group.groupName }}</td>
+                <td>{{ group.groupDetails }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    <h2>tbe</h2>
+
+    <h2>Player</h2>
     <table border="1">
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Username</th>
-                <th>Password</th>
+                <th>FK1</th>
+                <th>noteContent</th>
             </tr>
         </thead>
         <tbody>
-            {% for account in accounts %}
+            {% for player in players %}
             <tr>
-                <td>{{ account.id }}</td>
-                <td>{{ account.username }}</td>
-                <td>{{ account.password }}</td>
+                <td>{{ player.id }}</td>
+                <td>{{ player.groupID }}</td>
+                <td>{{ player.noteContent }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+
+    <h2>GameMaster</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>FK1</th>
+                <th>FK2</th>
+                <th>noteContent</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for gameMaster in gameMasters %}
+            <tr>
+                <td>{{ gameMaster.id }}</td>
+                <td>{{ gameMaster.accountID }}</td>
+                <td>{{ gameMaster.groupID }}</td>
+                <td>{{ gameMaster.noteContent }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Character</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>FK1</th>
+                <th>FK2</th>
+                <th>name</th>
+                <th>bio</th>
+                <th>image</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for character in characters %}
+            <tr>
+                <td>{{ character.id }}</td>
+                <td>{{ character.accountID }}</td>
+                <td>{{ character.playerID }}</td>
+                <td>{{ character.name }}</td>
+                <td>{{ character.bio }}</td>
+                <td>{{ character.image }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Stats</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>FK</th>
+                <th>statName</th>
+                <th>diceAmount</th>
+                <th>diceFaceValue</th>
+                <th>statNumericValue</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stat in statistics %}
+            <tr>
+                <td>{{ stat.id }}</td>
+                <td>{{ stat.characterID }}</td>
+                <td>{{ stat.statName }}</td>
+                <td>{{ stat.diceAmount }}</td>
+                <td>{{ stat.diceFaceValue }}</td>
+                <td>{{ stat.statNumericValue }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Unique Field</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>FK</th>
+                <th>fieldName</th>
+                <th>details</th>
+                <th>diceAmount</th>
+                <th>diceFaceValue</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for uniqueField in uniqueFields %}
+            <tr>
+                <td>{{ uniqueField.id }}</td>
+                <td>{{ uniqueField.characterID }}</td>
+                <td>{{ uniqueField.fieldName }}</td>
+                <td>{{ uniqueField.details }}</td>
+                <td>{{ uniqueField.diceAmount }}</td>
+                <td>{{ uniqueField.diceFaceValue }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
 </body>
 </html>
