@@ -56,7 +56,6 @@ class Character(db.Model):
     # account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
     # account = db.relationship('Account', backref=db.backref('characters', lazy=True))
 
-
 class Stats(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     characterID = db.Column(db.Integer, db.ForeignKey('character.id'), nullable=False)
