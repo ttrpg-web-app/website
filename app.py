@@ -30,15 +30,16 @@ class Account(UserMixin, db.Model):
 	
 class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    gameMasterID = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
-    groupName = db.Column(db.String(80), nullable=False)
+    accountID = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
+    groupName = db.Column(db.String(80), unique=True, nullable=False)
     groupDetails = db.Column(db.String(500), nullable=True) # noteContent
     # groupLogFilePath = db.Column(db.String(500), nullable=False) [not implemented]
     playerList = db.Column(db.String(500), nullable=True)
     players = db.relationship("Player", backref='group', lazy=True)
 
 class Player(db.Model):
-    id = db.Column(db.Integer, primary_key=True,nullable = True)
+    id = db.Column(db.Integer, primary_key=True)
+    accountID = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
     groupID = db.Column(db.Integer, db.ForeignKey('group.id'), nullable=False)
     noteContent = db.Column(db.String(500), nullable=True)
     characters = db.relationship('Character', backref='player', lazy=True)
@@ -119,11 +120,11 @@ def database():
     accounts = Account.query.all()
     groups = Group.query.all()
     players = Player.query.all()
-    gameMasters = GameMaster.query.all()
+ #   gameMasters = GameMaster.query.all()
     characters = Character.query.all()
     statistics = Stats.query.all()
     uniqueFields = UniqueField.query.all()
-    return render_template('database.html', accounts=accounts, groups=groups, players=players, gameMasters=gameMasters, characters=characters, statistics=statistics, uniqueFields=uniqueFields)
+    return render_template('database.html', accounts=accounts, groups=groups, players=players, characters=characters, statistics=statistics, uniqueFields=uniqueFields)
 
 	#groups = Group.query.all()
 
@@ -147,17 +148,11 @@ def addgroup():
     if request.method == 'POST':
         groupName = request.form['name']
         groupDetails = request.form['details']
-        playerList= session['username'] #get saved username for session        
+        playerList = session['username'] #get saved username for session        
         user = Account.query.filter_by(username=playerList).first() #uses saved username to find userID
         accountID = user.id
         new_group = Group(accountID=accountID, groupName=groupName, groupDetails=groupDetails, playerList=playerList) 
         db.session.add(new_group) #add new group to db
-        db.session.commit()
-
-        group_ID_Num = Group.query.filter_by(groupName=groupName, accountID=accountID).first() #searches for  using groupName and accountID
-        groupID = group_ID_Num.id #get groupID number
-        new_gameMaster = GameMaster(accountID=accountID,groupID=groupID)
-        db.session.add(new_gameMaster) #add new gameMaster to db
         db.session.commit()
 
         return redirect(url_for('dashboard'))
