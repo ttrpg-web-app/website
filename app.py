@@ -39,15 +39,16 @@ class Group(db.Model):
 
 class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    accountID = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
+    #accountID = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
     groupID = db.Column(db.Integer, db.ForeignKey('group.id'), nullable=False)
+    characterID = db.Column(db.Integer, db.ForeignKey('group.id'), nullable=False)
     noteContent = db.Column(db.String(500), nullable=True)
     characters = db.relationship('Character', backref='player', lazy=True)
 
 class Character(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     accountID = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
-    playerID = db.Column(db.Integer, db.ForeignKey('player.id'), nullable=False)
+    playerID = db.Column(db.Integer, db.ForeignKey('player.id'), nullable=True)
     name = db.Column(db.String(80), nullable=False)
     bio = db.Column(db.String(500), nullable=True)
     image = db.Column(db.String(80), nullable=True) #file for saved img path probably
@@ -166,8 +167,7 @@ def addcharacter():
 		name= request.form['name']
 		bio = request.form['bio']
 		image = request.files['image']
-		account_id = current_user.id
-        
+		accountID = current_user.id
 		if 'image' not in request.files:
 			flash('No file part')
 			return redirect('addcharacter.html')
@@ -176,14 +176,18 @@ def addcharacter():
 			return redirect('addcharacter.html')
 		if image:
 			image.save(os.path.join(app.config['UPLOAD_FOLDER'], image.filename))
-			new_character = Character(name=name, bio=bio, image=image.filename, accountID = account_id)
+			new_character = Character(name=name, bio=bio, image=image.filename, accountID = accountID)
 			db.session.add(new_character),
 			db.session.commit()
 			return render_template('addcharacter.html')
 	
 	return render_template('addcharacter.html')
-		
 
+@app.route('/joingroup',methods = ['POST', 'GET'] )
+@login_required
+def joingroup():
+		
+    return render_template('joingroup.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
