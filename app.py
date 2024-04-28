@@ -1,5 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_required, current_user, login_user, logout_user, current_user
@@ -132,7 +131,7 @@ def database():
     characters = Character.query.all()
     statistics = Stats.query.all()
     uniqueFields = UniqueField.query.all()
-    return render_template('database.html', accounts=accounts, groups=groups, players=players, gameMasters=gameMasters, characters=characters, statistics=statistics, uniqueFields=uniqueFields)
+    return render_template('database.html', accounts=accounts, groups=groups, players=players, characters=characters, statistics=statistics, uniqueFields=uniqueFields)
 
 @app.route('/logout')
 @login_required
@@ -223,6 +222,16 @@ def joingroup():
 #      if request.method == "POST":
 #           nameOfCharacter = request.form['character_name']
 #           dbs.session.update 
+
+@app.route('/uploads/<path:path>')
+def images(path):
+    return send_from_directory('uploads', path)
+
+@app.route('/characters', methods=['GET', 'POST'])
+@login_required
+def characters():
+    characters = Character.query.filter_by(accountID=current_user.id)
+    return render_template('characters.html', characters=characters)
 
 if __name__ == '__main__':
     app.run(debug=True)
