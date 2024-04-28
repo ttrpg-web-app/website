@@ -189,8 +189,13 @@ def addcharacter():
 			db.session.add(new_character),
 			db.session.commit()
 			return render_template('addcharacter.html')
-	
 	return render_template('addcharacter.html')
+
+@app.route('/joingroup',methods = ['POST', 'GET'] )
+@login_required
+def joingroup():
+		
+    return render_template('joingroup.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
