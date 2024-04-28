@@ -1,17 +1,13 @@
-from flask import Flask, render_template, request, redirect, url_for, session
-from flask import Flask, render_template, request, redirect, url_for, flash
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_required, current_user, login_user, logout_user, current_user
 import sqlite3
-import os
+import os, base64
 
-import os
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'abcdefghijklmnopqrstuvwxyz'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['UPLOAD_FOLDER'] = 'uploads'
 db = SQLAlchemy(app)
 
@@ -30,10 +26,7 @@ class Account(UserMixin, db.Model):
     password = db.Column(db.String(80), nullable=False)
     groups = db.relationship('Group', backref='account', lazy=True)
     characters = db.relationship('Character', backref='account', lazy=True)
-
-	
-
-	
+    
 class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     accountID = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
@@ -131,7 +124,7 @@ def database():
     characters = Character.query.all()
     statistics = Stats.query.all()
     uniqueFields = UniqueField.query.all()
-    return render_template('database.html', accounts=accounts, groups=groups, players=players, gameMasters=gameMasters, characters=characters, statistics=statistics, uniqueFields=uniqueFields)
+    return render_template('database.html', accounts=accounts, groups=groups, players=players, characters=characters, statistics=statistics, uniqueFields=uniqueFields)
 
 @app.route('/logout')
 @login_required
@@ -176,7 +169,6 @@ def addgroup():
     return render_template('addgroup.html')
 
 @app.route('/addcharacter',methods = ['POST', 'GET'] )
-@app.route('/addcharacter',methods = ['POST', 'GET'] )
 @login_required
 def addcharacter():
 
@@ -220,10 +212,15 @@ def addcharacter():
 	
 	return render_template('addcharacter.html')
 
+@app.route('/uploads/<path:path>')
+def images(path):
+    return send_from_directory('uploads', path)
+
 @app.route('/characters', methods=['GET', 'POST'])
 @login_required
 def characters():
-    return render_template('characters.html')
+    characters = Character.query.filter_by(accountID=current_user.id)
+    return render_template('characters.html', characters=characters)
 
 if __name__ == '__main__':
     app.run(debug=True)
