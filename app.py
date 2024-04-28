@@ -175,6 +175,19 @@ def joingroup():
           return redirect(url_for('dashboard'))
      return render_template('joingroup.html')
 
+@app.route('/addstats' ,methods = ['POST', 'GET'])
+@login_required
+def addstats():
+     
+     return render_template('addstats.html')
+
+@app.route('/adduniquefield' ,methods = ['POST', 'GET'])
+@login_required
+def adduniquefield():
+     
+     return render_template('adduniquefield.html')
+
+
 @app.route('/addcharacter',methods = ['POST', 'GET'] )
 @login_required
 def addcharacter():
