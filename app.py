@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_required, current_user, login_user, logout_user, current_user
 import sqlite3
-import os
+import os, re
 
 app = Flask(__name__)
 
@@ -27,7 +27,6 @@ class Account(UserMixin, db.Model):
     password = db.Column(db.String(80), nullable=False)
     groups = db.relationship('Group', backref='account', lazy=True)
     characters = db.relationship('Character', backref='account', lazy=True)
-
 	
 class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -53,8 +52,8 @@ class Character(db.Model):
     bio = db.Column(db.String(500), nullable=True)
     image = db.Column(db.String(80), nullable=True) #file for saved img path probably
     # inventory = array or something?
-    uniqueFields = db.relationship("UniqueField", backref='character', lazy=True)
-    stats = db.relationship("Stats", backref='character', lazy=True)
+    # uniqueFields = db.relationship("UniqueField", backref='character', lazy=True)
+    # stats = db.relationship("Stats", backref='character', lazy=True)
     # account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
     # account = db.relationship('Account', backref=db.backref('characters', lazy=True))
 
@@ -138,8 +137,15 @@ def logout():
 def dashboard():
     # needs code probably
     if request.method == 'POST':
-        session['group'] = request.form['groups'] # for some reason it just returns None
-        print(session['group'])
+        # store groupID from POST request form into group
+        if 'group' not in session:
+             session['group'] = []
+        formString = request.form['groups']
+        idNumStr = re.search(r'\d+', formString)
+        idNumStr2 = idNumStr.group()
+        idNum = int(idNumStr2)
+        session['group'] = idNum
+        # storing groupID in session ends here
         return redirect(url_for('viewgroup')) # GROUP PAGE DOES NOT EXIT YET
     else:
         groups = Group.query.filter_by(accountID=current_user.id)
@@ -149,7 +155,8 @@ def dashboard():
 @login_required
 def viewgroup():
     # code...
-    selectedGroup = session['selectedGroup']
+    selectedGroupID = session['group']
+    selectedGroup = Group.query.filter_by(id=selectedGroupID)
     return render_template('viewgroup.html', selectedGroup=selectedGroup)
 
 @app.route('/addgroup', methods=['GET', 'POST'])
@@ -191,11 +198,20 @@ def addcharacter():
 			return render_template('addcharacter.html')
 	return render_template('addcharacter.html')
 
-@app.route('/joingroup',methods = ['POST', 'GET'] )
+
+@app.route('/joingroup', methods=[ 'GET', 'POST'])
 @login_required
 def joingroup():
-		
-    return render_template('joingroup.html')
+     if request.method == 'POST':
+          nameOfGroup = request.form['name']
+          groupQuery = Group.query.filter_by(groupName=nameOfGroup).first()
+          groupID = groupQuery.id #
+          accountID = current_user.id
+          new_player = Player(groupID = groupID, characterID = accountID)
+          db.session.add(new_player) #add new group to db
+          db.session.commit()
+          return redirect(url_for('dashboard'))
+     return render_template('joingroup.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
