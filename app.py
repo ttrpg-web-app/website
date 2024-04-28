@@ -185,8 +185,11 @@ def addcharacter():
 			return render_template('addcharacter.html')
 	
 	return render_template('addcharacter.html')
-		
 
+@app.route('/characters', methods=['GET', 'POST'])
+@login_required
+def characters():
+    return render_template('characters.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
