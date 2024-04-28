@@ -72,28 +72,6 @@
             {% endfor %}
         </tbody>
     </table>
-
-    <h2>GameMaster</h2>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>FK1</th>
-                <th>FK2</th>
-                <th>noteContent</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for gameMaster in gameMasters %}
-            <tr>
-                <td>{{ gameMaster.id }}</td>
-                <td>{{ gameMaster.accountID }}</td>
-                <td>{{ gameMaster.groupID }}</td>
-                <td>{{ gameMaster.noteContent }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
     
     <h2>Character</h2>
     <table border="1">
