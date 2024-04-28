@@ -1,16 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory
-from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_required, current_user, login_user, logout_user, current_user
 import sqlite3
 import os, re
 
-import os
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'abcdefghijklmnopqrstuvwxyz'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['UPLOAD_FOLDER'] = 'uploads'
 db = SQLAlchemy(app)
 
@@ -29,10 +26,7 @@ class Account(UserMixin, db.Model):
     password = db.Column(db.String(80), nullable=False)
     groups = db.relationship('Group', backref='account', lazy=True)
     characters = db.relationship('Character', backref='account', lazy=True)
-
-	
-
-	
+    
 class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     accountID = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
@@ -183,7 +177,6 @@ def addgroup():
         return redirect(url_for('dashboard'))
     return render_template('addgroup.html')
 
-
 @app.route('/addcharacter',methods = ['POST', 'GET'] )
 @login_required
 def addcharacter():
@@ -230,6 +223,10 @@ def joingroup():
 #      if request.method == "POST":
 #           nameOfCharacter = request.form['character_name']
 #           dbs.session.update 
+
+@app.route('/uploads/<path:path>')
+def images(path):
+    return send_from_directory('uploads', path)
 
 @app.route('/uploads/<path:path>')
 def images(path):
