@@ -39,7 +39,7 @@ class Group(db.Model):
 
 class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    #accountID = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
+    # accountID = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
     groupID = db.Column(db.Integer, db.ForeignKey('group.id'), nullable=False)
     characterID = db.Column(db.Integer, db.ForeignKey('group.id'), nullable=False)
     noteContent = db.Column(db.String(500), nullable=True)
