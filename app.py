@@ -1,14 +1,17 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_required, current_user, login_user, logout_user, current_user
 import sqlite3
 import os
 
+import os
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'abcdefghijklmnopqrstuvwxyz'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['UPLOAD_FOLDER'] = 'uploads'
 db = SQLAlchemy(app)
 
@@ -27,6 +30,8 @@ class Account(UserMixin, db.Model):
     password = db.Column(db.String(80), nullable=False)
     groups = db.relationship('Group', backref='account', lazy=True)
     characters = db.relationship('Character', backref='account', lazy=True)
+
+	
 
 	
 class Group(db.Model):
@@ -55,6 +60,8 @@ class Character(db.Model):
     # inventory = array or something?
     uniqueFields = db.relationship("UniqueField", backref='character', lazy=True)
     stats = db.relationship("Stats", backref='character', lazy=True)
+    # account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
+    # account = db.relationship('Account', backref=db.backref('characters', lazy=True))
     # account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
     # account = db.relationship('Account', backref=db.backref('characters', lazy=True))
 
@@ -124,7 +131,7 @@ def database():
     characters = Character.query.all()
     statistics = Stats.query.all()
     uniqueFields = UniqueField.query.all()
-    return render_template('database.html', accounts=accounts, groups=groups, players=players, characters=characters, statistics=statistics, uniqueFields=uniqueFields)
+    return render_template('database.html', accounts=accounts, groups=groups, players=players, gameMasters=gameMasters, characters=characters, statistics=statistics, uniqueFields=uniqueFields)
 
 @app.route('/logout')
 @login_required
@@ -167,6 +174,7 @@ def addgroup():
 
         return redirect(url_for('dashboard'))
     return render_template('addgroup.html')
+
 
 @app.route('/addcharacter',methods = ['POST', 'GET'] )
 @login_required
