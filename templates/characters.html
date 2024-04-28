@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <head>
-    <title>Character</title>
+    <title>Characters</title>
     <style>
         body {
             background-color: #252422;
@@ -60,7 +62,7 @@
             text-align: center;
         }
 
-        .charCard
+        .characterCard
         {
             max-width: fit-content;
             margin-left: auto;
@@ -70,8 +72,13 @@
     </style>
 </head>
 <body>
-    <div class="charCard">
-        
-    </div> 
+    <div class="characterCard">
+        {% for character in characters %}
+            <h1>{{ character.name }}</h1>
+            <p>{{ character.bio }}</p>
+            <img src="uploads/{{character.image}}" alt="Image Preview">
+        {% endfor %}
+            <a href="/addcharacter"><button class="button">add character</button></a>
+    </div>
 </body>
 </html>
