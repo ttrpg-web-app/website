@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, s
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_required, current_user, login_user, logout_user, current_user
 import sqlite3
-import os, base64
+import os, re
 
 app = Flask(__name__)
 
@@ -38,10 +38,11 @@ class Group(db.Model):
 
 class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    # accountID = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
+    characterID = db.Column(db.Integer, db.ForeignKey('character.id'), nullable=False)
     groupID = db.Column(db.Integer, db.ForeignKey('group.id'), nullable=False)
+    characterID = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
     noteContent = db.Column(db.String(500), nullable=True)
-    characters = db.relationship('Character', backref='player', lazy=True)
+    # characters = db.relationship('Character', backref='player', lazy=True)
 
 class Character(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -138,8 +139,15 @@ def logout():
 def dashboard():
     # needs code probably
     if request.method == 'POST':
-        session['group'] = request.form['groups'] # for some reason it just returns None
-        print(session['group'])
+        # store groupID from POST request form into group
+        if 'group' not in session:
+             session['group'] = []
+        formString = request.form['groups']
+        idNumStr = re.search(r'\d+', formString)
+        idNumStr2 = idNumStr.group()
+        idNum = int(idNumStr2)
+        session['group'] = idNum
+        # storing groupID in session ends here
         return redirect(url_for('viewgroup')) # GROUP PAGE DOES NOT EXIT YET
     else:
         groups = Group.query.filter_by(accountID=current_user.id)
@@ -149,7 +157,8 @@ def dashboard():
 @login_required
 def viewgroup():
     # code...
-    selectedGroup = session['selectedGroup']
+    selectedGroupID = session['group']
+    selectedGroup = Group.query.filter_by(id=selectedGroupID)
     return render_template('viewgroup.html', selectedGroup=selectedGroup)
 
 @app.route('/addgroup', methods=['GET', 'POST'])
@@ -192,25 +201,32 @@ def addcharacter():
 	
 	return render_template('addcharacter.html')
 
-	if(request.method == 'POST'):
-		name= request.form['name']
-		bio = request.form['bio']
-		image = request.files['image']
-		account_id = current_user.id
-		if 'image' not in request.files:
-			flash('No file part')
-			return redirect('addcharacter.html')
-		if image.filename == '':
-			flash('The file name is empty')
-			return redirect('addcharacter.html')
-		if image:
-			image.save(os.path.join(app.config['UPLOAD_FOLDER'], image.filename))
-			new_character = Character(name=name, bio=bio, image=image.filename, account_id = account_id)
-			db.session.add(new_character),
-			db.session.commit()
-			return render_template('addcharacter.html')
-	
-	return render_template('addcharacter.html')
+@app.route('/joingroup', methods=[ 'GET', 'POST'])
+@login_required
+def joingroup():
+     if request.method == 'POST':
+          nameOfGroup = request.form['group_name']
+          groupQuery = Group.query.filter_by(groupName=nameOfGroup).first()
+          groupID = groupQuery.id #
+          accountID = current_user.id
+          new_player = Player(groupID = groupID, characterID = accountID)
+          db.session.add(new_player) #add new group to db
+          db.session.commit()
+          return redirect(url_for('dashboard'))
+     else:
+        groups = Group.query.all()  
+        return render_template('joingroup.html', groups = groups)
+     
+# @app.route('/group', methods= ['GET', 'POST'])
+# @login_required
+# def group():
+#      if request.method == "POST":
+#           nameOfCharacter = request.form['character_name']
+#           dbs.session.update 
+
+@app.route('/uploads/<path:path>')
+def images(path):
+    return send_from_directory('uploads', path)
 
 @app.route('/uploads/<path:path>')
 def images(path):
@@ -221,6 +237,26 @@ def images(path):
 def characters():
     characters = Character.query.filter_by(accountID=current_user.id)
     return render_template('characters.html', characters=characters)
+
+@app.route('/adduniquefield' ,methods = ['POST', 'GET'])
+@login_required
+def adduniquefield():
+
+     return render_template('adduniquefield.html')
+
+# @app.route('/joingroup', methods=[ 'GET', 'POST'])
+# @login_required
+# def joingroup():
+#      if request.method == 'POST':
+#           nameOfGroup = request.form['name']
+#           groupQuery = Group.query.filter_by(groupName=nameOfGroup).first()
+#           groupID = groupQuery.id #
+#           accountID = current_user.id
+#           new_player = Player(groupID = groupID, characterID = accountID)
+#           db.session.add(new_player) #add new group to db
+#           db.session.commit()
+#           return redirect(url_for('dashboard'))
+#      return render_template('joingroup.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

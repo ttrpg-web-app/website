@@ -1,7 +1,8 @@
+<!-- nothing here yep oop -->
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>TTRPG Organizer</title>
+        <title>Join a group!</title>
         <style>
             body {
                 background-color: #252422;
@@ -18,6 +19,7 @@
     
             .button {
                 background-color: #EB5E28;
+                width: 100%;
                 color: #fff;
                 font-weight: bold;
                 padding: 10px 20px;
@@ -61,16 +63,24 @@
             }
         </style>
     </head>
-    <body>
-        <div class="options-box">
-        <h1 class="title">
-            {% for group in selectedGroup %}
-                Welcome to {{ group.groupName }}!
-                {{ group.groupDetails }}
-            {% endfor %}
-            <br>
-            <a href="/dashboard"><button class="button">return to dashboard</button></a>
-        </h1>
-        </div>
-    </body>
+<body>
+    <div class="options-box">
+        <form action="/group" method="post">
+            <h2>Join a grousp</h2>
+            <select name="character_name" id="character_name">
+                {% for character in characters %}
+                <option value="{{ character.name }}">{{ character.name }}</option>
+                {% endfor %}
+            </select>
+            <!-- <label for="username">Username:</label><br> -->
+            <input type="submit" value="Join group" class="button">
+        </form>
+            <a href="/dashboard"><button class="button">dashboard</button></a>
+    </div>
+    {% if error %}
+    <div class="alert">
+        <p style="text-align:center; font-weight: bold;">{{ error }}</p>
+    </div>
+    {% endif %}
+</body>
 </html>

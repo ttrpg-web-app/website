@@ -20,6 +20,10 @@
                 border-radius: 8px;
                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             }
+
+            .center-container {
+                text-align: center; /* Center aligns the button horizontally */
+            }
     
             .button {
                 background-color: #EB5E28;
@@ -31,6 +35,8 @@
                 cursor: pointer;
                 font-size: 14px;
                 transition: background-color 0.3s, color 0.3s;
+                margin: 3px 0;
+
             }
     
             .button:hover { /* changes to this background color and text color on hover */
@@ -64,21 +70,41 @@
                 margin: 20px auto 0;
                 text-align: center;
             }
+
         </style>
     </head>
     <body>
         <!-- oops this broke the page if user was not logged in
             probably because {{ name }} couldn't be retrieved
             and it would still attempt it even if it wouldn't load to show this -->
-        {% if current_user.is_authenticated %}
-        <h1 class="title">
-            Welcome, {{ name }}!
-        </h1>
-        {% endif %}
+        
+        <div class="options-box">
+            <div class="center-container">
+                <h1>Account Dashboard</h1>
+                {% if current_user.is_authenticated %}
+                <h2 class="title">
+                    Welcome, {{ name }}!
+                </h2>
+                {% endif %}
+                
+                <a href="/"><button class="button">return to home</button></a>
+            </div>
+        </div>
 
         <div class="options-box">
-        <h2>Account Dashboard</h2>
-        <h3>Select Group:</h3>
+            <div class="center-container">
+                <h2>Manage Characters</h2>
+                <div class="center-container">
+                    <a href="/addcharacter"><button class="button">create new character</button></a>
+                    <br>
+                    <a href="/characters"><button class="button">view character</button></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="options-box">
+            <div class="center-container">
+            <h2>Manage Groups</h2>
 
         <form method="POST" action="/dashboard">
             <select name=groups method="GET" action="/dashboard">
@@ -92,7 +118,8 @@
         <a href="/"><button class="button">return to home</button></a>
         <a href="/characters"><button class="button">view characters</button></a>
         <a href="/addcharacter"><button class="button">add character</button></a>
-
+        <a href="/addgroup"><button class="button">create new group</button></a>
+        <a href="/joingroup"><button class="button">join new group</button></a>
         </div>
     </body>
 </html>

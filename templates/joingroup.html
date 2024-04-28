@@ -66,9 +66,13 @@
 <body>
     <div class="options-box">
         <form action="/joingroup" method="post">
-            <h2>Join a group</h2>
+            <h2>Join a grousdsdsdsp</h2>
+            <select name="group_name" id="group_name">
+                {% for group in groups %}
+                <option value="{{ group.groupName }}">{{ group.groupName }}</option>
+                {% endfor %}
+            </select>
             <!-- <label for="username">Username:</label><br> -->
-            <input type="text" id="name" name="name" placeholder="Enter group name"><br>
             <input type="submit" value="Join group" class="button">
         </form>
             <a href="/dashboard"><button class="button">dashboard</button></a>
