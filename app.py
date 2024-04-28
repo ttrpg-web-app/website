@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_required, current_user, login_user, logout_user, current_user
 import sqlite3
-import os
+import os, re
 
 import os
 app = Flask(__name__)
@@ -145,8 +145,15 @@ def logout():
 def dashboard():
     # needs code probably
     if request.method == 'POST':
-        session['group'] = request.form['groups'] # for some reason it just returns None
-        print(session['group'])
+        # store groupID from POST request form into group
+        if 'group' not in session:
+             session['group'] = []
+        formString = request.form['groups']
+        idNumStr = re.search(r'\d+', formString)
+        idNumStr2 = idNumStr.group()
+        idNum = int(idNumStr2)
+        session['group'] = idNum
+        # storing groupID in session ends here
         return redirect(url_for('viewgroup')) # GROUP PAGE DOES NOT EXIT YET
     else:
         groups = Group.query.filter_by(accountID=current_user.id)
@@ -156,7 +163,8 @@ def dashboard():
 @login_required
 def viewgroup():
     # code...
-    selectedGroup = session['selectedGroup']
+    selectedGroupID = session['group']
+    selectedGroup = Group.query.filter_by(id=selectedGroupID)
     return render_template('viewgroup.html', selectedGroup=selectedGroup)
 
 @app.route('/addgroup', methods=['GET', 'POST'])
@@ -239,19 +247,19 @@ def adduniquefield():
 
      return render_template('adduniquefield.html')
 
-@app.route('/joingroup', methods=[ 'GET', 'POST'])
-@login_required
-def joingroup():
-     if request.method == 'POST':
-          nameOfGroup = request.form['name']
-          groupQuery = Group.query.filter_by(groupName=nameOfGroup).first()
-          groupID = groupQuery.id #
-          accountID = current_user.id
-          new_player = Player(groupID = groupID, characterID = accountID)
-          db.session.add(new_player) #add new group to db
-          db.session.commit()
-          return redirect(url_for('dashboard'))
-     return render_template('joingroup.html')
+# @app.route('/joingroup', methods=[ 'GET', 'POST'])
+# @login_required
+# def joingroup():
+#      if request.method == 'POST':
+#           nameOfGroup = request.form['name']
+#           groupQuery = Group.query.filter_by(groupName=nameOfGroup).first()
+#           groupID = groupQuery.id #
+#           accountID = current_user.id
+#           new_player = Player(groupID = groupID, characterID = accountID)
+#           db.session.add(new_player) #add new group to db
+#           db.session.commit()
+#           return redirect(url_for('dashboard'))
+#      return render_template('joingroup.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
