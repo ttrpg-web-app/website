@@ -1,14 +1,17 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_required, current_user, login_user, logout_user, current_user
 import sqlite3
 import os
 
+import os
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'abcdefghijklmnopqrstuvwxyz'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['UPLOAD_FOLDER'] = 'uploads'
 db = SQLAlchemy(app)
 
@@ -29,6 +32,8 @@ class Account(UserMixin, db.Model):
     characters = db.relationship('Character', backref='account', lazy=True)
 
 	
+
+	
 class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     accountID = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
@@ -40,11 +45,11 @@ class Group(db.Model):
 
 class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    # accountID = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
+    characterID = db.Column(db.Integer, db.ForeignKey('character.id'), nullable=False)
     groupID = db.Column(db.Integer, db.ForeignKey('group.id'), nullable=False)
     characterID = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
     noteContent = db.Column(db.String(500), nullable=True)
-    characters = db.relationship('Character', backref='player', lazy=True)
+    # characters = db.relationship('Character', backref='player', lazy=True)
 
 class Character(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -56,6 +61,8 @@ class Character(db.Model):
     # inventory = array or something?
     uniqueFields = db.relationship("UniqueField", backref='character', lazy=True)
     stats = db.relationship("Stats", backref='character', lazy=True)
+    # account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
+    # account = db.relationship('Account', backref=db.backref('characters', lazy=True))
     # account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
     # account = db.relationship('Account', backref=db.backref('characters', lazy=True))
 
@@ -125,7 +132,7 @@ def database():
     characters = Character.query.all()
     statistics = Stats.query.all()
     uniqueFields = UniqueField.query.all()
-    return render_template('database.html', accounts=accounts, groups=groups, players=players, characters=characters, statistics=statistics, uniqueFields=uniqueFields)
+    return render_template('database.html', accounts=accounts, groups=groups, players=players, gameMasters=gameMasters, characters=characters, statistics=statistics, uniqueFields=uniqueFields)
 
 @app.route('/logout')
 @login_required
@@ -169,6 +176,7 @@ def addgroup():
         return redirect(url_for('dashboard'))
     return render_template('addgroup.html')
 
+
 @app.route('/addcharacter',methods = ['POST', 'GET'] )
 @login_required
 def addcharacter():
@@ -196,16 +204,25 @@ def addcharacter():
 @app.route('/joingroup', methods=[ 'GET', 'POST'])
 @login_required
 def joingroup():
-    if request.method == 'POST':
-        nameOfGroup = request.form['name']
-        groupQuery = Group.query.filter_by(groupName=nameOfGroup).first()
-        groupID = groupQuery.id #
-        accountID = current_user.id
-        new_player = Player(groupID = groupID, characterID = accountID)
-        db.session.add(new_player) #add new group to db
-        db.session.commit()
-        return redirect(url_for('dashboard'))
-    return render_template('joingroup.html')
+     if request.method == 'POST':
+          nameOfGroup = request.form['group_name']
+          groupQuery = Group.query.filter_by(groupName=nameOfGroup).first()
+          groupID = groupQuery.id #
+          accountID = current_user.id
+          new_player = Player(groupID = groupID, characterID = accountID)
+          db.session.add(new_player) #add new group to db
+          db.session.commit()
+          return redirect(url_for('dashboard'))
+     else:
+        groups = Group.query.all()  
+        return render_template('joingroup.html', groups = groups)
+     
+# @app.route('/group', methods= ['GET', 'POST'])
+# @login_required
+# def group():
+#      if request.method == "POST":
+#           nameOfCharacter = request.form['character_name']
+#           dbs.session.update 
 
 if __name__ == '__main__':
     app.run(debug=True)
