@@ -40,10 +40,10 @@ class Group(db.Model):
 
 class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    # accountID = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
+    characterID = db.Column(db.Integer, db.ForeignKey('character.id'), nullable=False)
     groupID = db.Column(db.Integer, db.ForeignKey('group.id'), nullable=False)
     noteContent = db.Column(db.String(500), nullable=True)
-    characters = db.relationship('Character', backref='player', lazy=True)
+    # characters = db.relationship('Character', backref='player', lazy=True)
 
 class Character(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -191,6 +191,27 @@ def addcharacter():
 			return render_template('addcharacter.html')
 	
 	return render_template('addcharacter.html')
-
+@app.route('/joingroup', methods=[ 'GET', 'POST'])
+@login_required
+def joingroup():
+     if request.method == 'POST':
+          nameOfGroup = request.form['group_name']
+          groupQuery = Group.query.filter_by(groupName=nameOfGroup).first()
+          groupID = groupQuery.id #
+          accountID = current_user.id
+          new_player = Player(groupID = groupID, characterID = accountID)
+          db.session.add(new_player) #add new group to db
+          db.session.commit()
+          return redirect(url_for('dashboard'))
+     else:
+        groups = Group.query.all()  
+        return render_template('joingroup.html', groups = groups)
+     
+# @app.route('/group', methods= ['GET', 'POST'])
+# @login_required
+# def group():
+#      if request.method == "POST":
+#           nameOfCharacter = request.form['character_name']
+#           dbs.session.update 
 if __name__ == '__main__':
     app.run(debug=True)
