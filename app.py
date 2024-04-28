@@ -233,5 +233,25 @@ def characters():
     characters = Character.query.filter_by(accountID=current_user.id)
     return render_template('characters.html', characters=characters)
 
+@app.route('/adduniquefield' ,methods = ['POST', 'GET'])
+@login_required
+def adduniquefield():
+
+     return render_template('adduniquefield.html')
+
+@app.route('/joingroup', methods=[ 'GET', 'POST'])
+@login_required
+def joingroup():
+     if request.method == 'POST':
+          nameOfGroup = request.form['name']
+          groupQuery = Group.query.filter_by(groupName=nameOfGroup).first()
+          groupID = groupQuery.id #
+          accountID = current_user.id
+          new_player = Player(groupID = groupID, characterID = accountID)
+          db.session.add(new_player) #add new group to db
+          db.session.commit()
+          return redirect(url_for('dashboard'))
+     return render_template('joingroup.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
