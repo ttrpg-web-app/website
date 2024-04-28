@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_required, current_user, login_user, logout_user, current_user
 import sqlite3
@@ -8,7 +9,7 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'abcdefghijklmnopqrstuvwxyz'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-
+app.config['UPLOAD_FOLDER'] = 'uploads'
 db = SQLAlchemy(app)
 
 login_manager = LoginManager()
