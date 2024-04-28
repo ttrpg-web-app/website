@@ -47,6 +47,7 @@ class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     characterID = db.Column(db.Integer, db.ForeignKey('character.id'), nullable=False)
     groupID = db.Column(db.Integer, db.ForeignKey('group.id'), nullable=False)
+    characterID = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
     noteContent = db.Column(db.String(500), nullable=True)
     # characters = db.relationship('Character', backref='player', lazy=True)
 
@@ -199,6 +200,7 @@ def addcharacter():
 			return render_template('addcharacter.html')
 	
 	return render_template('addcharacter.html')
+
 @app.route('/joingroup', methods=[ 'GET', 'POST'])
 @login_required
 def joingroup():
@@ -221,5 +223,6 @@ def joingroup():
 #      if request.method == "POST":
 #           nameOfCharacter = request.form['character_name']
 #           dbs.session.update 
+
 if __name__ == '__main__':
     app.run(debug=True)
