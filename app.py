@@ -167,7 +167,7 @@ def joingroup():
      if request.method == 'POST':
           nameOfGroup = request.form['name']
           groupQuery = Group.query.filter_by(groupName=nameOfGroup).first()
-          groupID = groupQuery.id
+          groupID = groupQuery.id #
           accountID = current_user.id
           new_player = Player(groupID = groupID, characterID = accountID)
           db.session.add(new_player) #add new group to db
