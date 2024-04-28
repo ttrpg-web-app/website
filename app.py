@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_required, current_user, login_user, logout_user, current_user
 import sqlite3
 import os
+
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'abcdefghijklmnopqrstuvwxyz'
@@ -57,7 +58,6 @@ class Character(db.Model):
     stats = db.relationship("Stats", backref='character', lazy=True)
     # account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
     # account = db.relationship('Account', backref=db.backref('characters', lazy=True))
-
 
 class Stats(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -127,9 +127,6 @@ def database():
     uniqueFields = UniqueField.query.all()
     return render_template('database.html', accounts=accounts, groups=groups, players=players, characters=characters, statistics=statistics, uniqueFields=uniqueFields)
 
-	#groups = Group.query.all()
-
-
 @app.route('/logout')
 @login_required
 def logout():
@@ -137,11 +134,24 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
-@app.route('/dashboard')
+@app.route('/dashboard', methods=['GET', 'POST']) # specifically account background
 @login_required
 def dashboard():
     # needs code probably
-    return render_template('dashboard.html') #need to pass needed variables
+    if request.method == 'POST':
+        session['group'] = request.form['groups'] # for some reason it just returns None
+        print(session['group'])
+        return redirect(url_for('viewgroup')) # GROUP PAGE DOES NOT EXIT YET
+    else:
+        groups = Group.query.filter_by(accountID=current_user.id)
+        return render_template('dashboard.html', groups=groups, name=current_user.username)
+
+@app.route('/viewgroup')
+@login_required
+def viewgroup():
+    # code...
+    selectedGroup = session['selectedGroup']
+    return render_template('viewgroup.html', selectedGroup=selectedGroup)
 
 @app.route('/addgroup', methods=['GET', 'POST'])
 @login_required
