@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_required, current_user, login_user, logout_user, current_user
 import sqlite3
-import os
+import os, re
 
 import os
 app = Flask(__name__)
@@ -238,7 +238,47 @@ def characters():
 def adduniquefield():
 
      return render_template('adduniquefield.html')
+'''
+@app.route('/addstats',methods = ['POST', 'GET'] )
+@login_required
+def stats():
+   if request.method == 'POST':
+       statName = request.form['name']
+       statNumericValue = request.form['statnumericvalue']
+       characterID = character.id
+       new_stats = Stats(characterID=characterID, statName=statName, statNumericValue=statNumericValue)
+       db.session.add(new_stats) #add new stats to db
+       db.session.commit()
 
+
+       return redirect(url_for('stats'))
+   return render_template('addstats.html')
+'''
+@app.route('/viewstats', methods=['GET', 'POST'])
+@login_required
+def viewstats():
+    if request.method == 'POST':
+        session['stats'] = request.form['stats'] # for some reason it just returns None
+        return redirect(url_for('editstats')) #
+    else:
+        curStats = Stats.query.filter_by(characterID=4) #hardcoded rn
+        return render_template('viewstats.html', stats=curStats)
+
+@app.route('/editstats', methods=['GET', 'POST'])
+@login_required
+def editstats():
+    if request.method == 'POST':
+         return redirect(url_for('viewstats'))
+    else:
+        curStats = session['stats']
+        justNum = re.search(r'\d+', curStats)
+        justNum2 = justNum.group()
+        idNum = int(justNum2)
+        passthis = Stats.query.filter_by(id=idNum)
+        print(session['stats'])
+        return render_template('editstats.html', stats=passthis)
+
+'''
 @app.route('/joingroup', methods=[ 'GET', 'POST'])
 @login_required
 def joingroup():
@@ -252,6 +292,6 @@ def joingroup():
           db.session.commit()
           return redirect(url_for('dashboard'))
      return render_template('joingroup.html')
-
+'''
 if __name__ == '__main__':
     app.run(debug=True)
