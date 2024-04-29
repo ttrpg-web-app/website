@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_required, current_user, login_user, logout_user, current_user
 import sqlite3
@@ -33,7 +33,6 @@ class Group(db.Model):
     groupName = db.Column(db.String(80), unique=True, nullable=False)
     groupDetails = db.Column(db.String(500), nullable=True) # noteContent
     # groupLogFilePath = db.Column(db.String(500), nullable=False) [not implemented]
-    playerList = db.Column(db.String(500), nullable=True)
     players = db.relationship("Player", backref='group', lazy=True)
 
 class Player(db.Model):
@@ -41,7 +40,6 @@ class Player(db.Model):
     characterID = db.Column(db.Integer, db.ForeignKey('character.id'), nullable=False)
     groupID = db.Column(db.Integer, db.ForeignKey('group.id'), nullable=False)
     characterID = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
-    noteContent = db.Column(db.String(500), nullable=True)
     # characters = db.relationship('Character', backref='player', lazy=True)
 
 class Character(db.Model):
@@ -51,7 +49,6 @@ class Character(db.Model):
     name = db.Column(db.String(80), nullable=False)
     bio = db.Column(db.String(500), nullable=True)
     image = db.Column(db.String(80), nullable=True) #file for saved img path probably
-    # inventory = array or something?
     uniqueFields = db.relationship("UniqueField", backref='character', lazy=True)
     stats = db.relationship("Stats", backref='character', lazy=True)
     # account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
@@ -63,8 +60,6 @@ class Stats(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     characterID = db.Column(db.Integer, db.ForeignKey('character.id'), nullable=False)
     statName = db.Column(db.String(80), nullable=False)
-    diceAmount = db.Column(db.Integer, nullable=True)
-    diceFaceValue = db.Column(db.Integer, nullable=True)
     statNumericValue = db.Column(db.Integer, nullable=True)
 
 class UniqueField(db.Model):
@@ -72,8 +67,6 @@ class UniqueField(db.Model):
     characterID = db.Column(db.Integer, db.ForeignKey('character.id'), nullable=False)
     fieldName = db.Column(db.String(80), nullable=False)
     details = db.Column(db.String(500), nullable=True)
-    diceAmount = db.Column(db.Integer, nullable=True)
-    diceFaceValue = db.Column(db.Integer, nullable=True)
 
 with app.app_context():
     db.create_all()
@@ -241,6 +234,12 @@ def addcharacter():
 	
 	return render_template('addcharacter.html')
 
+@app.route('/adduniquefield' ,methods = ['POST', 'GET'])
+@login_required
+def adduniquefield():
+     
+     return render_template('adduniquefield.html')
+
 '''
 @app.route('/addstats',methods = ['POST', 'GET'] )
 @login_required
@@ -266,33 +265,42 @@ def viewstats():
     else:
         curStats = Stats.query.filter_by(characterID=4) #hardcoded rn
         return render_template('viewstats.html', stats=curStats)
+'''   
+@app.route('/editstats/<int:id>', methods = ['POST', 'GET']) #get id to pass to addstats
+@login_required
+def editstats(id):
+     session['statid'] = id
+     characters = Character.query.filter_by(id=id)     
+     return render_template('editstats.html', characters=characters)
 
 @app.route('/editstats', methods=['GET', 'POST'])
 @login_required
 def editstats():
+    id = session['statid']
     if request.method == 'POST':
-         return redirect(url_for('viewstats'))
+         return redirect(url_for('characters'))
     else:
-        curStats = session['stats']
-        justNum = re.search(r'\d+', curStats)
-        justNum2 = justNum.group()
-        idNum = int(justNum2)
-        passthis = Stats.query.filter_by(id=idNum)
-        print(session['stats'])
+#        curStats = session['stats'] this version of stats in session no longer needed
+#        justNum = re.search(r'\d+', curStats)
+#        justNum2 = justNum.group()
+#        idNum = int(justNum2)
+        passthis = Stats.query.filter_by(id=1)
+#        print(session['stats'])
         return render_template('editstats.html', stats=passthis)
+'''
 
-@app.route('/adduniquefield/<int:id>', methods = ['POST', 'GET'])
-@login_required
-def adduniquefield(id):
-    return render_template('adduniquefield.html')
- 
-@app.route('/addstats/<int:id>', methods = ['POST', 'GET'])
+#@app.route('/adduniquefield/<int:id>', methods = ['POST', 'GET'])
+#@login_required
+#def adduniquefield(id):
+#    return render_template('adduniquefield.html')
+
+@app.route('/addstats/<int:id>', methods = ['POST', 'GET']) #get id to pass to addstats
 @login_required
 def addstats(id):
      return render_template('addstats.html')
 @app.route('/editcharacter/<int:id>', methods=['GET', 'POST'])
 @login_required
-def editChatacter(id):
+def editCharacter(id):
       character = Character.query.get(id)
       if request.method == 'POST':
            character.name = request.form['name']
