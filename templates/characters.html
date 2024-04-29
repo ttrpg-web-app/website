@@ -76,7 +76,8 @@
         {% for character in characters %}
             <h1>{{ character.name }}</h1>
             <p>{{ character.bio }}</p>
-            <img src="uploads/{{character.image}}" alt="Image Preview">
+            <img src="/uploads/{{character.image}}" alt="Image Preview">
+            <a href='/removecharacter/{{ character.id }}'><button class="button">remove character</button></a>
         {% endfor %}
             <a href="/addcharacter"><button class="button">add character</button></a>
     </div>
