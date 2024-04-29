@@ -62,13 +62,15 @@
         </style>
     </head>
     <body>
-        
+        <div class="options-box">
         <h1 class="title">
-            Welcome to {{ selectedGroup.groupName }}!
-            {{ selectedGroup.id }}
+            {% for group in selectedGroup %}
+                Welcome to {{ group.groupName }}!
+                {{ group.groupDetails }}
+            {% endfor %}
+            <br>
             <a href="/dashboard"><button class="button">return to dashboard</button></a>
         </h1>
-
         </div>
     </body>
 </html>
