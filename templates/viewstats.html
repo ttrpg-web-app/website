@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <head>
-    <title>Characters</title>
+    <title>View stats</title>
     <style>
         body {
             background-color: #252422;
@@ -19,16 +19,17 @@
         }
 
         .button {
-            background-color: #EB5E28;
-            color: #fff;
-            font-weight: bold;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s, color 0.3s;
-        }
+                background-color: #EB5E28;
+                width: 100%;
+                color: #fff;
+                font-weight: bold;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 14px;
+                transition: background-color 0.3s, color 0.3s;
+            }
 
         .button:hover { /* changes to this background color and text color on hover */
             background-color: #252422;
@@ -72,19 +73,19 @@
     </style>
 </head>
 <body>
-    <div class="characterCard">
-        {% for character in characters %}
-            <h1>{{ character.name }}</h1>
-            <p>{{ character.bio }}</p>
-            <img src="/uploads/{{character.image}}" alt="Image Preview">
-            
-            <a href='/addstats/{{ character.id }}'><button class="button">add stats</button></a>
-            <a href='/adduniquefield/{{ character.id }}'><button class="button">add unique field</button></a>
+    <div class="options-box">
+        <h3>Select stat:</h3>
 
-            <a href='/removecharacter/{{ character.id }}'><button class="button">remove character</button></a>
-            <a href='/editcharacter/{{character.id}}'><button class = "button" > edit character</button></a>
-        {% endfor %}
-            <br><a href="/addcharacter"><button class="button">add character</button></a>
-    </div>
+        <form method="POST" action="/viewstats">
+            <select name=stats method="GET" action="/viewstats">
+                {% for stats in stats %}
+                <option value= "{{stats}}" SELECTED>{{stats.statName}}</option>"
+                {% endfor %}
+            </select>
+            <input type="submit" class="button" value ="View or edit stats">
+
+            
+        </form>
+        <a href="/dashboard"><button class="button">return to home</button></a>
 </body>
 </html>

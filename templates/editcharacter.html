@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Character</title>
+    <title>Edit Character</title>
 
     <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}"> -->
     <style>
@@ -73,8 +73,8 @@
 </head>
 <body>
     <div class="login-box">
-        <h2>Create Character</h2>
-        <form action="/addcharacter" method="post" enctype="multipart/form-data">
+        <h2>Edit Character</h2>
+        <form action="/editcharacter/{{character.id}}" method="post" enctype="multipart/form-data">
             <label for="name">Name:</label><br>
             <input type="text" id="name" name="name"><br>
             <label for="bio">Bio:</label><br>
@@ -82,7 +82,7 @@
             <label for="image">Image:</label><br>
             <input type="file" id="image" name="image" accept="image/*"><br>
             <img id="preview" src="#" alt="Image Preview" style="display: none;">
-            <input type="submit" value="Register" class="button">
+            <input type="submit" value="Update" class="button">
         </form>
         <a href="/dashboard"><button class="button">return to dashboard</button></a>
     </div>
