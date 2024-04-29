@@ -228,10 +228,6 @@ def joingroup():
 def images(path):
     return send_from_directory('uploads', path)
 
-@app.route('/uploads/<path:path>')
-def images(path):
-    return send_from_directory('uploads', path)
-
 @app.route('/characters', methods=['GET', 'POST'])
 @login_required
 def characters():
