@@ -65,13 +65,16 @@
     </head>
 <body>
     <div class="options-box">
-        <form action="/addstats" method="post">
+        {% for character in characters %}
+        <form action="/addstats/" method="post">
             <h2>Enter stats details:</h2>
-            <input type="text" id="name" name="name" placeholder="Stats name"><br>
+            <input type="text" id="fieldname" name="fieldname" placeholder="Stats name"><br>
             <input type="text" id="statvalue" name="statvalue" placeholder="Stats numeric value"><br><br>
-            <input type="submit" value="Submit" class="button">
+            <input type="submit" value="Add Stat" class="button">
+            <!-- <a href='/addstats/{{ character.id }}'><button class="button">add stats</button></a><br> -->
         </form>
-            <a href="/dashboard"><button class="button">dashboard</button></a>
+        {% endfor %}
+            <br><a href="/dashboard"><button class="button">dashboard</button></a>
     </div>
     {% if error %}
     <div class="alert">

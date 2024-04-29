@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_required, current_user, login_user, logout_user, current_user
 import sqlite3
@@ -241,6 +241,12 @@ def addcharacter():
 	
 	return render_template('addcharacter.html')
 
+@app.route('/adduniquefield' ,methods = ['POST', 'GET'])
+@login_required
+def adduniquefield():
+     
+     return render_template('adduniquefield.html')
+
 '''
 @app.route('/addstats',methods = ['POST', 'GET'] )
 @login_required
@@ -266,31 +272,56 @@ def viewstats():
     else:
         curStats = Stats.query.filter_by(characterID=4) #hardcoded rn
         return render_template('viewstats.html', stats=curStats)
+'''   
+@app.route('/editstats/<int:id>', methods = ['POST', 'GET']) #get id to pass to addstats
+@login_required
+def editstats(id):
+     session['statid'] = id
+     characters = Character.query.filter_by(id=id)     
+     return render_template('editstats.html', characters=characters)
 
 @app.route('/editstats', methods=['GET', 'POST'])
 @login_required
 def editstats():
+    id = session['statid']
     if request.method == 'POST':
-         return redirect(url_for('viewstats'))
+         return redirect(url_for('characters'))
     else:
-        curStats = session['stats']
-        justNum = re.search(r'\d+', curStats)
-        justNum2 = justNum.group()
-        idNum = int(justNum2)
-        passthis = Stats.query.filter_by(id=idNum)
-        print(session['stats'])
+#        curStats = session['stats'] this version of stats in session no longer needed
+#        justNum = re.search(r'\d+', curStats)
+#        justNum2 = justNum.group()
+#        idNum = int(justNum2)
+        passthis = Stats.query.filter_by(id=1)
+#        print(session['stats'])
         return render_template('editstats.html', stats=passthis)
+'''
 
-@app.route('/adduniquefield/<int:id>', methods = ['POST', 'GET'])
-@login_required
-def adduniquefield(id):
-    return render_template('adduniquefield.html')
- 
-@app.route('/addstats/<int:id>', methods = ['POST', 'GET'])
+#@app.route('/adduniquefield/<int:id>', methods = ['POST', 'GET'])
+#@login_required
+#def adduniquefield(id):
+#    return render_template('adduniquefield.html')
+
+@app.route('/addstats/<int:id>', methods = ['POST', 'GET']) #get id to pass to addstats
 @login_required
 def addstats(id):
-     return render_template('addstats.html')
+     session['char'] = id
+     characters = Character.query.filter_by(id=id)     
+     return render_template('addstats.html', characters=characters)
 
+@app.route('/addstats/', methods = ['POST', 'GET'])
+@login_required
+def addstatss():
+     id = session['char']
+     characters = Character.query.filter_by(id=id)
+     if request.method == 'POST':
+        statName = request.form['fieldname']
+        statNumericValue = request.form['statvalue']
+        new_stats = Stats(characterID=id, statName=statName, statNumericValue=statNumericValue)
+        db.session.add(new_stats)
+        db.session.commit()
+        return redirect(url_for('characters'))
+     return render_template('addstats.html', characters=characters)
+   
 # @app.route('/joingroup', methods=[ 'GET', 'POST'])
 # @login_required
 # def joingroup():
