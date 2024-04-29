@@ -221,7 +221,6 @@ def removecharacter(id):
 @app.route('/addcharacter',methods = ['POST', 'GET'] )
 @login_required
 def addcharacter():
-
 	if(request.method == 'POST'):
 		name= request.form['name']
 		bio = request.form['bio']
@@ -241,6 +240,46 @@ def addcharacter():
 			return render_template('addcharacter.html')
 	
 	return render_template('addcharacter.html')
+
+'''
+@app.route('/addstats',methods = ['POST', 'GET'] )
+@login_required
+def stats():
+   if request.method == 'POST':
+       statName = request.form['name']
+       statNumericValue = request.form['statnumericvalue']
+       characterID = character.id
+       new_stats = Stats(characterID=characterID, statName=statName, statNumericValue=statNumericValue)
+       db.session.add(new_stats) #add new stats to db
+       db.session.commit()
+
+
+       return redirect(url_for('stats'))
+   return render_template('addstats.html')
+'''
+@app.route('/viewstats', methods=['GET', 'POST'])
+@login_required
+def viewstats():
+    if request.method == 'POST':
+        session['stats'] = request.form['stats'] # for some reason it just returns None
+        return redirect(url_for('editstats')) #
+    else:
+        curStats = Stats.query.filter_by(characterID=4) #hardcoded rn
+        return render_template('viewstats.html', stats=curStats)
+
+@app.route('/editstats', methods=['GET', 'POST'])
+@login_required
+def editstats():
+    if request.method == 'POST':
+         return redirect(url_for('viewstats'))
+    else:
+        curStats = session['stats']
+        justNum = re.search(r'\d+', curStats)
+        justNum2 = justNum.group()
+        idNum = int(justNum2)
+        passthis = Stats.query.filter_by(id=idNum)
+        print(session['stats'])
+        return render_template('editstats.html', stats=passthis)
 
 @app.route('/adduniquefield/<int:id>', methods = ['POST', 'GET'])
 @login_required
