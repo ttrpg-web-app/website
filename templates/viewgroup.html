@@ -69,6 +69,9 @@
                 {{ group.groupDetails }}
             {% endfor %}
             <br>
+            {% for player in players %}
+                player id and character: {{ player.id }}
+            {% endfor %}
             <a href="/dashboard"><button class="button">return to dashboard</button></a>
         </h1>
         </div>

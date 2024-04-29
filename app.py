@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_required, current_user, login_user, logout_user, current_user
 import sqlite3
@@ -40,7 +40,7 @@ class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     characterID = db.Column(db.Integer, db.ForeignKey('character.id'), nullable=False)
     groupID = db.Column(db.Integer, db.ForeignKey('group.id'), nullable=False)
-    characterID = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
+    accountID = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
     noteContent = db.Column(db.String(500), nullable=True)
     # characters = db.relationship('Character', backref='player', lazy=True)
 
@@ -121,7 +121,6 @@ def database():
     accounts = Account.query.all()
     groups = Group.query.all()
     players = Player.query.all()
- #   gameMasters = GameMaster.query.all()
     characters = Character.query.all()
     statistics = Stats.query.all()
     uniqueFields = UniqueField.query.all()
@@ -148,18 +147,28 @@ def dashboard():
         idNum = int(idNumStr2)
         session['group'] = idNum
         # storing groupID in session ends here
+
         return redirect(url_for('viewgroup')) # GROUP PAGE DOES NOT EXIT YET
     else:
         groups = Group.query.filter_by(accountID=current_user.id)
-        return render_template('dashboard.html', groups=groups, name=current_user.username)
+
+        player_query = Player.query.filter_by(accountID=current_user.id).all()
+        group_ids = [player.groupID for player in player_query]
+        playerGroups = Group.query.filter(Group.id.in_(group_ids))
+        
+        return render_template('dashboard.html', groups=groups, name=current_user.username, playerGroups=playerGroups) #players=playerGroups
 
 @app.route('/viewgroup')
 @login_required
 def viewgroup():
-    # code...
+    # retrieve group from the session arr
     selectedGroupID = session['group']
     selectedGroup = Group.query.filter_by(id=selectedGroupID)
-    return render_template('viewgroup.html', selectedGroup=selectedGroup)
+
+    # retrieve player classes with matching group id
+    players = Player.query.filter_by(groupID=selectedGroupID)
+
+    return render_template('viewgroup.html', selectedGroup=selectedGroup, players=players)
 
 @app.route('/addgroup', methods=['GET', 'POST'])
 @login_required
@@ -180,7 +189,6 @@ def addgroup():
 @app.route('/addcharacter',methods = ['POST', 'GET'] )
 @login_required
 def addcharacter():
-
 	if(request.method == 'POST'):
 		name= request.form['name']
 		bio = request.form['bio']
@@ -206,27 +214,20 @@ def addcharacter():
 def joingroup():
      if request.method == 'POST':
           nameOfGroup = request.form['group_name']
+          character = request.form['character']
           groupQuery = Group.query.filter_by(groupName=nameOfGroup).first()
-          groupID = groupQuery.id #
+          groupID = groupQuery.id
           accountID = current_user.id
-          new_player = Player(groupID = groupID, characterID = accountID)
+          new_player = Player(groupID = groupID, accountID = accountID, characterID = character)
           db.session.add(new_player) #add new group to db
           db.session.commit()
           return redirect(url_for('dashboard'))
-     else:
-        groups = Group.query.all()  
-        return render_template('joingroup.html', groups = groups)
-     
-# @app.route('/group', methods= ['GET', 'POST'])
-# @login_required
-# def group():
-#      if request.method == "POST":
-#           nameOfCharacter = request.form['character_name']
-#           dbs.session.update 
 
-@app.route('/uploads/<path:path>')
-def images(path):
-    return send_from_directory('uploads', path)
+     else:
+        characters = Character.query.filter_by(accountID=current_user.id)
+        
+        groups = Group.query.all()
+        return render_template('joingroup.html', groups = groups, characters=characters)
 
 @app.route('/uploads/<path:path>')
 def images(path):
