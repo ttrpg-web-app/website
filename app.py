@@ -177,30 +177,6 @@ def addgroup():
         return redirect(url_for('dashboard'))
     return render_template('addgroup.html')
 
-@app.route('/addcharacter',methods = ['POST', 'GET'] )
-@login_required
-def addcharacter():
-
-	if(request.method == 'POST'):
-		name= request.form['name']
-		bio = request.form['bio']
-		image = request.files['image']
-		accountID = current_user.id
-		if 'image' not in request.files:
-			flash('No file part')
-			return redirect('addcharacter.html')
-		if image.filename == '':
-			flash('The file name is empty')
-			return redirect('addcharacter.html')
-		if image:
-			image.save(os.path.join(app.config['UPLOAD_FOLDER'], image.filename))
-			new_character = Character(name=name, bio=bio, image=image.filename, accountID = accountID)
-			db.session.add(new_character),
-			db.session.commit()
-			return render_template('addcharacter.html')
-	
-	return render_template('addcharacter.html')
-
 @app.route('/joingroup', methods=[ 'GET', 'POST'])
 @login_required
 def joingroup():
@@ -228,15 +204,43 @@ def joingroup():
 def images(path):
     return send_from_directory('uploads', path)
 
-@app.route('/uploads/<path:path>')
-def images(path):
-    return send_from_directory('uploads', path)
-
 @app.route('/characters', methods=['GET', 'POST'])
 @login_required
 def characters():
     characters = Character.query.filter_by(accountID=current_user.id)
     return render_template('characters.html', characters=characters)
+
+@app.route("/removecharacter/<int:id>", methods=['POST', 'GET'])
+@login_required
+def removecharacter(id):
+    obj = Character.query.filter_by(id=id).one()
+    db.session.delete(obj)
+    db.session.commit()
+    return redirect(url_for('characters'))
+
+@app.route('/addcharacter',methods = ['POST', 'GET'] )
+@login_required
+def addcharacter():
+
+	if(request.method == 'POST'):
+		name= request.form['name']
+		bio = request.form['bio']
+		image = request.files['image']
+		accountID = current_user.id
+		if 'image' not in request.files:
+			flash('No file part')
+			return redirect('addcharacter.html')
+		if image.filename == '':
+			flash('The file name is empty')
+			return redirect('addcharacter.html')
+		if image:
+			image.save(os.path.join(app.config['UPLOAD_FOLDER'], image.filename))
+			new_character = Character(name=name, bio=bio, image=image.filename, accountID = accountID)
+			db.session.add(new_character),
+			db.session.commit()
+			return render_template('addcharacter.html')
+	
+	return render_template('addcharacter.html')
 
 @app.route('/adduniquefield' ,methods = ['POST', 'GET'])
 @login_required
