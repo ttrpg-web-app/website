@@ -242,14 +242,14 @@ def addcharacter():
 	
 	return render_template('addcharacter.html')
 
-@app.route('/adduniquefield' ,methods = ['POST', 'GET'])
+@app.route('/adduniquefield/<int:id>', methods = ['POST', 'GET'])
 @login_required
-def adduniquefield():
-     return render_template('adduniquefield.html')
+def adduniquefield(id):
+    return render_template('adduniquefield.html')
  
-@app.route('/addstats' ,methods = ['POST', 'GET'])
+@app.route('/addstats/<int:id>', methods = ['POST', 'GET'])
 @login_required
-def addstats():
+def addstats(id):
      return render_template('addstats.html')
 
 # @app.route('/joingroup', methods=[ 'GET', 'POST'])
