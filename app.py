@@ -33,7 +33,6 @@ class Group(db.Model):
     groupName = db.Column(db.String(80), unique=True, nullable=False)
     groupDetails = db.Column(db.String(500), nullable=True) # noteContent
     # groupLogFilePath = db.Column(db.String(500), nullable=False) [not implemented]
-    playerList = db.Column(db.String(500), nullable=True)
     players = db.relationship("Player", backref='group', lazy=True)
 
 class Player(db.Model):
@@ -41,7 +40,6 @@ class Player(db.Model):
     characterID = db.Column(db.Integer, db.ForeignKey('character.id'), nullable=False)
     groupID = db.Column(db.Integer, db.ForeignKey('group.id'), nullable=False)
     characterID = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
-    noteContent = db.Column(db.String(500), nullable=True)
     # characters = db.relationship('Character', backref='player', lazy=True)
 
 class Character(db.Model):
@@ -51,7 +49,6 @@ class Character(db.Model):
     name = db.Column(db.String(80), nullable=False)
     bio = db.Column(db.String(500), nullable=True)
     image = db.Column(db.String(80), nullable=True) #file for saved img path probably
-    # inventory = array or something?
     uniqueFields = db.relationship("UniqueField", backref='character', lazy=True)
     stats = db.relationship("Stats", backref='character', lazy=True)
     # account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
@@ -63,8 +60,6 @@ class Stats(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     characterID = db.Column(db.Integer, db.ForeignKey('character.id'), nullable=False)
     statName = db.Column(db.String(80), nullable=False)
-    diceAmount = db.Column(db.Integer, nullable=True)
-    diceFaceValue = db.Column(db.Integer, nullable=True)
     statNumericValue = db.Column(db.Integer, nullable=True)
 
 class UniqueField(db.Model):
@@ -72,8 +67,6 @@ class UniqueField(db.Model):
     characterID = db.Column(db.Integer, db.ForeignKey('character.id'), nullable=False)
     fieldName = db.Column(db.String(80), nullable=False)
     details = db.Column(db.String(500), nullable=True)
-    diceAmount = db.Column(db.Integer, nullable=True)
-    diceFaceValue = db.Column(db.Integer, nullable=True)
 
 with app.app_context():
     db.create_all()
