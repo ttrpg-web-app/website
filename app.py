@@ -240,54 +240,40 @@ def adduniquefield():
      
      return render_template('adduniquefield.html')
 
-'''
-@app.route('/addstats',methods = ['POST', 'GET'] )
-@login_required
-def stats():
-   if request.method == 'POST':
-       statName = request.form['name']
-       statNumericValue = request.form['statnumericvalue']
-       characterID = character.id
-       new_stats = Stats(characterID=characterID, statName=statName, statNumericValue=statNumericValue)
-       db.session.add(new_stats) #add new stats to db
-       db.session.commit()
 
-
-       return redirect(url_for('stats'))
-   return render_template('addstats.html')
-'''
-@app.route('/viewstats', methods=['GET', 'POST'])
+@app.route('/viewstats/<int:id>', methods=['GET', 'POST']) #to view and edit stats
 @login_required
-def viewstats():
+def viewstats(id):
+    session['char'] = id
+
+    curStats = Stats.query.filter_by(characterID=id) 
+    return render_template('viewstats.html', stats=curStats)
+
+@app.route('/viewstats/', methods=['GET', 'POST']) #to view and edit stats
+@login_required
+def viewstatss():
+    curStatsChar = session['char']
+    curStats = Stats.query.filter_by(characterID=curStatsChar)
     if request.method == 'POST':
-        session['stats'] = request.form['stats'] # for some reason it just returns None
-        return redirect(url_for('editstats')) #
+        session['stats'] = request.form['stats']
+        return redirect(url_for('editstats'))
     else:
-        curStats = Stats.query.filter_by(characterID=4) #hardcoded rn
         return render_template('viewstats.html', stats=curStats)
-'''   
-@app.route('/editstats/<int:id>', methods = ['POST', 'GET']) #get id to pass to addstats
-@login_required
-def editstats(id):
-     session['statid'] = id
-     characters = Character.query.filter_by(id=id)     
-     return render_template('editstats.html', characters=characters)
+
 
 @app.route('/editstats', methods=['GET', 'POST'])
 @login_required
 def editstats():
-    id = session['statid']
     if request.method == 'POST':
          return redirect(url_for('characters'))
     else:
-#        curStats = session['stats'] this version of stats in session no longer needed
-#        justNum = re.search(r'\d+', curStats)
-#        justNum2 = justNum.group()
-#        idNum = int(justNum2)
-        passthis = Stats.query.filter_by(id=1)
-#        print(session['stats'])
-        return render_template('editstats.html', stats=passthis)
-'''
+        curStats = session['stats']
+        justNum = re.search(r'\d+', curStats)
+        justNum2 = justNum.group()
+        idNum = int(justNum2)
+        idNumPass = Stats.query.filter_by(id=idNum)
+        return render_template('editstats.html', stats=idNumPass)
+
 
 #@app.route('/adduniquefield/<int:id>', methods = ['POST', 'GET'])
 #@login_required
