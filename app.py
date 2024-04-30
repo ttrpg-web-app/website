@@ -293,38 +293,48 @@ def adduniquefields():
           return redirect(url_for('characters'))
     return render_template('adduniquefield.html', characters = characters)
 
+@app.route("/removestats/<int:id>", methods=['POST', 'GET'])
+@login_required
+def removestats(id):
+    obj = Stats.query.filter_by(id=id).one()
+    db.session.delete(obj)
+    db.session.commit()
+
+    return redirect(url_for('characters'))
+
 @app.route('/viewstats/<int:id>', methods=['GET', 'POST']) #to view and edit stats
 @login_required
 def viewstats(id):
-    session['char'] = id
+    session['viewstat'] = id
 
-    curStats = Stats.query.filter_by(characterID=id) 
+    curStats = Stats.query.filter_by(characterID =id)
+    print(curStats)
     return render_template('viewstats.html', stats=curStats)
 
-@app.route('/viewstats/', methods=['GET', 'POST']) #to view and edit stats
+@app.route('/editstats/<int:id>', methods = ['POST', 'GET']) #get id to pass to addstats
 @login_required
-def viewstatss():
-    curStatsChar = session['char']
-    curStats = Stats.query.filter_by(characterID=curStatsChar)
-    if request.method == 'POST':
-        session['stats'] = request.form['stats']
-        return redirect(url_for('editstats'))
-    else:
-        return render_template('viewstats.html', stats=curStats)
+def editstats(id):
+
+     session['sessionstats']=id
+     getStats = Stats.query.filter_by(id=id)
+
+     return render_template('editstats.html', stats=getStats)
+
+@app.route('/editstats/', methods = ['POST', 'GET']) #get id to pass to addstats
+@login_required
+def editstatss():
+     stats = session['sessionstats']
+     getStats = Stats.query.get(stats)
+
+     if request.method == 'POST':
+          getStats.statName = request.form['fieldname']
+          getStats.statNumericValue = request.form['statvalue']
+          db.session.commit()
+          return redirect(url_for('characters'))
+
+     return render_template('editstats.html', stats=getStats)
 
 
-@app.route('/editstats', methods=['GET', 'POST'])
-@login_required
-def editstats():
-    if request.method == 'POST':
-         return redirect(url_for('characters'))
-    else:
-        curStats = session['stats']
-        justNum = re.search(r'\d+', curStats)
-        justNum2 = justNum.group()
-        idNum = int(justNum2)
-        idNumPass = Stats.query.filter_by(id=idNum)
-        return render_template('editstats.html', stats=idNumPass)
 
 @app.route('/addstats/<int:id>', methods = ['POST', 'GET']) #get id to pass to addstats
 @login_required
