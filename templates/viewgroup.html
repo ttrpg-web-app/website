@@ -15,6 +15,10 @@
                 border-radius: 8px;
                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             }
+            
+            .img {
+                width: 300px;
+            }
     
             .button {
                 background-color: #EB5E28;
@@ -63,14 +67,36 @@
     </head>
     <body>
         <div class="options-box">
-        <h1 class="title">
-            {% for group in selectedGroup %}
-                Welcome to {{ group.groupName }}!
-                {{ group.groupDetails }}
-            {% endfor %}
-            <br>
-            <a href="/dashboard"><button class="button">return to dashboard</button></a>
-        </h1>
+                {% for group in selectedGroup %}
+                <h1 class="title">Welcome to {{ group.groupName }}!</h1>
+                <h4>{{ group.groupDetails }}</h4>
+                {% endfor %}
+                <a href="/dashboard"><button class="button">return to dashboard</button></a>
         </div>
+            <br>
+            {% for player in players %}
+                {% for character in characters %}
+                    {% if player.characterID == character.id %}
+                    <div class="options-box">
+
+                        <h2>{{ character.name }}</h2>
+                        <p>{{ character.bio }}</p>
+                        <img src="/uploads/{{character.image}}" alt="character image" class="img">
+
+                        {% for stat in stats %}
+                            {% if stat.characterID == character.id %}
+                                <p><strong>{{ stat.statName }}</strong>: {{ stat.statNumericValue }}</p>
+                            {% endif %}
+                        {% endfor %}
+                        {% for uf in uniqueFields %}
+                            {% if uf.characterID == character.id %}
+                            <p><strong>{{ uf.fieldName }}</strong>: {{ uf.details }}</p>
+                            {% endif %}
+                        {% endfor %}
+
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
     </body>
 </html>

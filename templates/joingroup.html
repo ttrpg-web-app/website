@@ -66,10 +66,15 @@
 <body>
     <div class="options-box">
         <form action="/joingroup" method="post">
-            <h2>Join a grousdsdsdsp</h2>
+            <h2>Join A Group</h2>
             <select name="group_name" id="group_name">
                 {% for group in groups %}
                 <option value="{{ group.groupName }}">{{ group.groupName }}</option>
+                {% endfor %}
+            </select>
+            <select name="character" id="character">
+                {% for character in characters %}
+                <option value="{{ character.id }}">{{ character.name }}</option>
                 {% endfor %}
             </select>
             <!-- <label for="username">Username:</label><br> -->
