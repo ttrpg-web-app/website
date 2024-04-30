@@ -19,6 +19,25 @@
             .img {
                 width: 300px;
             }
+
+            .stat-block {
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                padding: 10px;
+                margin-bottom: 10px;
+                background-color: #bfb5a4;
+                /* overflow: hidden; */
+            }
+
+            .stat-name {
+                display: inline-block;
+                width: 70px;
+                font-weight: bold;
+            }
+
+            .stat-value {
+                display: inline-block;
+            }
     
             .button {
                 background-color: #EB5E28;
@@ -83,16 +102,27 @@
                         <p>{{ character.bio }}</p>
                         <img src="/uploads/{{character.image}}" alt="character image" class="img">
 
-                        {% for stat in stats %}
-                            {% if stat.characterID == character.id %}
-                                <p><strong>{{ stat.statName }}</strong>: {{ stat.statNumericValue }}</p>
-                            {% endif %}
-                        {% endfor %}
+                        <div class="stat-blocks">
+                            {% for stat in stats %}
+                                {% if stat.characterID == character.id %}
+                                    <div class="stat-block">
+                                        <div class="stat-name">{{ stat.statName }}:</div>
+                                        <div class="stat-value">{{ stat.statNumericValue }}</div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="stat-blocks"></div>
                         {% for uf in uniqueFields %}
                             {% if uf.characterID == character.id %}
-                            <p><strong>{{ uf.fieldName }}</strong>: {{ uf.details }}</p>
+                                <div class="stat-block">
+                                    <div class="stat-name">{{ uf.fieldName }}:</div>
+                                    <div class="stat-value">{{ uf.details }}</div>
+                                </div>
                             {% endif %}
                         {% endfor %}
+                    </div>
 
                     </div>
                     {% endif %}

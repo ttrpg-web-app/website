@@ -30,15 +30,12 @@ class Group(db.Model):
     accountID = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
     groupName = db.Column(db.String(80), unique=True, nullable=False)
     groupDetails = db.Column(db.String(500), nullable=True) # noteContent
-    # # groupLogFilePath = db.Column(db.String(500), nullable=False) [not implemented]
-    # players = db.relationship("Player", backref='group', lazy=True)
 
 class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     characterID = db.Column(db.Integer, db.ForeignKey('character.id'), nullable=False)
     groupID = db.Column(db.Integer, db.ForeignKey('group.id'), nullable=False)
     accountID = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
-    # characters = db.relationship('Character', backref='player', lazy=True)
 
 class Character(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -47,12 +44,6 @@ class Character(db.Model):
     name = db.Column(db.String(80), nullable=False)
     bio = db.Column(db.String(500), nullable=True)
     image = db.Column(db.String(80), nullable=True) #file for saved img path probably
-    # uniqueFields = db.relationship("UniqueField", backref='character', lazy=True)
-    # stats = db.relationship("Stats", backref='character', lazy=True)
-    # account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
-    # account = db.relationship('Account', backref=db.backref('characters', lazy=True))
-    # account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
-    # account = db.relationship('Account', backref=db.backref('characters', lazy=True))
 
 class Stats(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -233,14 +224,6 @@ def joingroup():
         groups = Group.query.all()
         return render_template('joingroup.html', groups = groups, characters=characters)
 
-     
-# @app.route('/group', methods= ['GET', 'POST'])
-# @login_required
-# def group():
-#      if request.method == "POST":
-#           nameOfCharacter = request.form['character_name']
-#           dbs.session.update 
-
 @app.route('/uploads/<path:path>')
 def images(path):
     return send_from_directory('uploads', path)
@@ -364,16 +347,6 @@ def addstatss():
         return redirect(url_for('characters'))
      return render_template('addstats.html', characters=characters)
 
-#@app.route('/adduniquefield/<int:id>', methods = ['POST', 'GET'])
-#@login_required
-#def adduniquefield(id):
-#    return render_template('adduniquefield.html')
-
-# @app.route('/addstats/<int:id>', methods = ['POST', 'GET']) #get id to pass to addstats
-# @login_required
-# def addstats(id):
-#      return render_template('addstats.html')
-
 @app.route('/editcharacter/<int:id>', methods=['GET', 'POST'])
 @login_required
 def editCharacter(id):
@@ -390,48 +363,6 @@ def editCharacter(id):
                 return redirect(url_for('characters'))           
 
       return render_template('editcharacter.html', character = character)
-
-# @app.route('/adduniquefield/<int:id>', methods = ['POST', 'GET'])
-# @login_required
-# def adduniquefield(id):
-#     session['uniquefieldid'] = id
-#     characters = Character.query.filter_by(id=id)
-#     if request.method == 'POST':
-#           fieldName = request.form['unique_field_name']
-#           details = request.form['unique_field_details']
-#           new_uniqueField = UniqueField(characterID = id,  fieldName= fieldName, details= details)
-#           db.session.add(new_uniqueField) #add new unique field to db
-#           db.session.commit()
-#           return redirect(url_for('characters'))
-#     return render_template('adduniquefield.html', characters = characters)
-
-# @app.route('/adduniquefield/', methods = ['POST', 'GET'])
-# @login_required
-# def adduniquefields():
-#     id = session['uniquefieldid']
-#     characters = Character.query.filter_by(id=id)
-#     if request.method == 'POST':
-#           fieldName = request.form['unique_field_name']
-#           details = request.form['unique_field_details']
-#           new_uniqueField = UniqueField(characterID = id,  fieldName= fieldName, details= details)
-#           db.session.add(new_uniqueField) #add new unique field to db
-#           db.session.commit()
-#           return redirect(url_for('characters'))
-#     return render_template('adduniquefield.html', characters = characters)
-
-# @app.route('/joingroup', methods=[ 'GET', 'POST'])
-# @login_required
-# def joingroup():
-#      if request.method == 'POST':
-#           nameOfGroup = request.form['name']
-#           groupQuery = Group.query.filter_by(groupName=nameOfGroup).first()
-#           groupID = groupQuery.id #
-#           accountID = current_user.id
-#           new_player = Player(groupID = groupID, characterID = accountID)
-#           db.session.add(new_player) #add new group to db
-#           db.session.commit()
-#           return redirect(url_for('dashboard'))
-#      return render_template('joingroup.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
