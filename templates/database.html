@@ -59,7 +59,6 @@
                 <th>ID</th>
                 <th>GroupID</th>
                 <th>CharacterID</th>
-                <th>noteContent</th>
             </tr>
         </thead>
         <tbody>
@@ -67,8 +66,8 @@
             <tr>
                 <td>{{ player.id }}</td>
                 <td>{{ player.groupID }}</td>
-                <td>{{ player.characterID}}</td>
-                <td>{{ player.noteContent }}</td>
+                <td>{{ player.characterID }}</td>
+                <td>{{ player.accoutnID }}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -107,8 +106,6 @@
                 <th>ID</th>
                 <th>FK</th>
                 <th>statName</th>
-                <th>diceAmount</th>
-                <th>diceFaceValue</th>
                 <th>statNumericValue</th>
             </tr>
         </thead>
@@ -118,8 +115,6 @@
                 <td>{{ stat.id }}</td>
                 <td>{{ stat.characterID }}</td>
                 <td>{{ stat.statName }}</td>
-                <td>{{ stat.diceAmount }}</td>
-                <td>{{ stat.diceFaceValue }}</td>
                 <td>{{ stat.statNumericValue }}</td>
             </tr>
             {% endfor %}
@@ -134,8 +129,6 @@
                 <th>FK</th>
                 <th>fieldName</th>
                 <th>details</th>
-                <th>diceAmount</th>
-                <th>diceFaceValue</th>
             </tr>
         </thead>
         <tbody>
@@ -145,8 +138,6 @@
                 <td>{{ uniqueField.characterID }}</td>
                 <td>{{ uniqueField.fieldName }}</td>
                 <td>{{ uniqueField.details }}</td>
-                <td>{{ uniqueField.diceAmount }}</td>
-                <td>{{ uniqueField.diceFaceValue }}</td>
             </tr>
             {% endfor %}
         </tbody>

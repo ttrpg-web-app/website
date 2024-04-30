@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Character</title>
+
+    <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}"> -->
+    <style>
+        body {
+            background-color: #252422;
+        }
+
+        .login-box {
+            width: 300px;
+            margin: 50px auto 0 auto;
+            padding: 20px;
+            background-color: #CCC5B9;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .button {
+            background-color: #EB5E28;
+            color: #fff;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .button:hover { /* changes to this background color and text color on hover */
+            background-color: #252422;
+            color: #FFFCF2;
+        }
+
+        label {
+            color: #252422;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="submit"] {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .alert {
+            padding: 15px;
+            background-color: #EB5E28;
+            color: white;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            width: 50%;
+            margin: 20px auto 0;
+            text-align: center;
+        }
+
+        img {
+            max-width: 100%;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h2>Edit Character</h2>
+        <form action="/editcharacter/{{character.id}}" method="post" enctype="multipart/form-data">
+            <label for="name">Name:</label><br>
+            <input type="text" id="name" name="name"><br>
+            <label for="bio">Bio:</label><br>
+            <input type="text" id="bio" name="bio"><br><br>
+            <label for="image">Image:</label><br>
+            <input type="file" id="image" name="image" accept="image/*"><br>
+            <img id="preview" src="#" alt="Image Preview" style="display: none;">
+            <input type="submit" value="Update" class="button">
+        </form>
+        <a href="/dashboard"><button class="button">return to dashboard</button></a>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('image');
+        const previewImg = document.getElementById('preview');
+
+        fileInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImg.src = e.target.result;
+                    previewImg.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            } else {
+                previewImg.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

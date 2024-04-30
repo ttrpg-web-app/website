@@ -6,11 +6,6 @@
             body {
                 background-color: #252422;
             }
-
-            h1
-            {
-                color: #fff;
-            }
     
             .options-box {
                 width: 300px;
@@ -97,7 +92,7 @@
                 <div class="center-container">
                     <a href="/addcharacter"><button class="button">create new character</button></a>
                     <br>
-                    <a href="/characters"><button class="button">view character</button></a>
+                    <a href="/characters"><button class="button">view all characters</button></a>
                 </div>
             </div>
         </div>
@@ -106,20 +101,28 @@
             <div class="center-container">
             <h2>Manage Groups</h2>
 
-        <form method="POST" action="/dashboard">
-            <select name=groups method="GET" action="/dashboard">
-                {% for groups in groups %}
-                <option value= "{{groups}}" SELECTED>{{groups.groupName}}</option>"
-                {% endfor %}
-            </select>
-            <input type="submit" class="button" value ="go to group">
+            <h3>Owned Groups:</h3>
+            <form method="POST" action="/gmview">
+                <select name=group method="GET" action="/gmview">
+                    {% for groups in groups %}
+                    <option value= "{{groups}}" SELECTED>{{groups.groupName}}</option>"
+                    {% endfor %}
+                </select>
+                <input type="submit" class="button" value ="go to group">
+            </form>
 
-        </form>
-        <a href="/"><button class="button">return to home</button></a>
-        <a href="/characters"><button class="button">view characters</button></a>
-        <a href="/addcharacter"><button class="button">add character</button></a>
-        <a href="/addgroup"><button class="button">create new group</button></a>
-        <a href="/joingroup"><button class="button">join new group</button></a>
+            <h3>Joined Groups:</h3>
+            <form method="POST" action="/playerview">
+                <select name=group method="GET" action="/playerview">
+                    {% for pg in playerGroups %}
+                    <option value= "{{pg}}" SELECTED>{{pg.groupName}}</option>"
+                    {% endfor %}
+                </select>
+                <input type="submit" class="button" value ="go to group">
+            </form>
+
+            <a href="/addgroup"><button class="button">create new group</button></a>
+            <a href="/joingroup"><button class="button">join new group</button></a>
         </div>
     </body>
 </html>
