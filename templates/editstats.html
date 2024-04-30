@@ -63,7 +63,7 @@
         <form action="/editstats" method="post">
             <h2>Enter stats details:</h2>
             {% for stats in stats %}
-            <input type="text" id="name" name="name" value="{{stats.statName}}"> <br>
+            <input type="text" id="fieldname" name="fieldname" value="{{stats.statName}}"> <br>
             <input type="text" id="statvalue" name="statvalue" value="{{stats.statNumericValue}}"><br><br>
             {% endfor %}
             <input type="submit" value="Submit" class="button">
