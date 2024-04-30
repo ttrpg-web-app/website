@@ -64,13 +64,14 @@
     </head>
 <body>
     <div class="options-box">
+        {% for character in characters %}
         <form action="/adduniquefield" method="post">
             <h2>Enter unique field details</h2>
-            <!-- <label for="username">Username:</label><br> -->
-            <input type="text" id="name" name="name" placeholder="Unique field name"><br>
-            <input type="text" id="field" name="field" placeholder="Unique field description"><br>
-            <input type="submit" value="Submit" class="button">
+            <input type="text" id="unique_field_name" name="unique_field_name" placeholder="Unique field name"><br>
+            <input type="text" id="unique_field_details" name="unique_field_details" placeholder="Unique field description"><br>
+            <input type="submit" value="add unique field" class="button">
         </form>
+        {% endfor %}
             <a href="/dashboard"><button class="button">dashboard</button></a>
     </div>
     {% if error %}
