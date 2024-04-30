@@ -3,14 +3,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <head>
-    <title>Your stats!</title>
+    <title>Edit Unique Field!</title>
     <style>
         body {
             background-color: #252422;
-        }
-
-        .img {
-            width: 300px;
         }
 
         .options-box {
@@ -31,6 +27,7 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 14px;
+            width: 100%;
             transition: background-color 0.3s, color 0.3s;
         }
 
@@ -66,26 +63,31 @@
             text-align: center;
         }
 
-        .statsCard
+        .characterCard
         {
             max-width: fit-content;
             margin-left: auto;
             margin-right: auto;
             background-color: #CCC5B9;
         }
-    </style>
-</head>
+        </style>
+    </head>
 <body>
     <div class="options-box">
-        {% for stats in stats %}
-            <h1>{{ stats.statName }}</h1>
-            </h2>{{ stats.statNumericValue }}</h2><br>  
-            <a href='/editstats/{{stats.id}}'><button class = "button" >edit stat</button></a>
-            <a href='/removestats/{{stats.id }}'><button class="button">remove stat</button></a> <br>
+        <form action="/edituniquefield" method="post">
+            <h2>Enter unique field details:</h2>
+            {% for uniquefields in uniquefields %}
+            <input type="text" id="fieldname" name="fieldname" value="{{uniquefields.fieldName}}"> <br>
+            <input type="text" id="statdetails" name="statdetails" value="{{uniquefields.details}}"><br><br>
             {% endfor %}
-            <br>
-            <br>
-            <br><a href="/characters"><button class="button">Go back</button></a>
+            <input type="submit" value="Submit" class="button">
+        </form>
+            <a href="/characters"><button class="button">Go back</button></a>
     </div>
+    {% if error %}
+    <div class="alert">
+        <p style="text-align:center; font-weight: bold;">{{ error }}</p>
+    </div>
+    {% endif %}
 </body>
 </html>
