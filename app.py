@@ -301,6 +301,34 @@ def editCharacter(id):
 
       return render_template('editcharacter.html', character = character)
 
+@app.route('/adduniquefield/<int:id>', methods = ['POST', 'GET'])
+@login_required
+def adduniquefield(id):
+    session['uniquefieldid'] = id
+    characters = Character.query.filter_by(id=id)
+    if request.method == 'POST':
+          fieldName = request.form['unique_field_name']
+          details = request.form['unique_field_details']
+          new_uniqueField = UniqueField(characterID = id,  fieldName= fieldName, details= details)
+          db.session.add(new_uniqueField) #add new unique field to db
+          db.session.commit()
+          return redirect(url_for('characters'))
+    return render_template('adduniquefield.html', characters = characters)
+
+@app.route('/adduniquefield/', methods = ['POST', 'GET'])
+@login_required
+def adduniquefields():
+    id = session['uniquefieldid']
+    characters = Character.query.filter_by(id=id)
+    if request.method == 'POST':
+          fieldName = request.form['unique_field_name']
+          details = request.form['unique_field_details']
+          new_uniqueField = UniqueField(characterID = id,  fieldName= fieldName, details= details)
+          db.session.add(new_uniqueField) #add new unique field to db
+          db.session.commit()
+          return redirect(url_for('characters'))
+    return render_template('adduniquefield.html', characters = characters)
+
 # @app.route('/joingroup', methods=[ 'GET', 'POST'])
 # @login_required
 # def joingroup():
