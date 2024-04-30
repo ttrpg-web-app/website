@@ -102,8 +102,8 @@
             <h2>Manage Groups</h2>
 
             <h3>Owned Groups:</h3>
-            <form method="POST" action="/dashboard">
-                <select name=groups method="GET" action="/dashboard">
+            <form method="POST" action="/gmview">
+                <select name=group method="GET" action="/gmview">
                     {% for groups in groups %}
                     <option value= "{{groups}}" SELECTED>{{groups.groupName}}</option>"
                     {% endfor %}
@@ -112,15 +112,14 @@
             </form>
 
             <h3>Joined Groups:</h3>
-            <form method="POST" action="/dashboard">
-                <select name=pg method="GET" action="/dashboard">
+            <form method="POST" action="/playerview">
+                <select name=group method="GET" action="/playerview">
                     {% for pg in playerGroups %}
                     <option value= "{{pg}}" SELECTED>{{pg.groupName}}</option>"
                     {% endfor %}
                 </select>
                 <input type="submit" class="button" value ="go to group">
             </form>
-
 
             <a href="/addgroup"><button class="button">create new group</button></a>
             <a href="/joingroup"><button class="button">join new group</button></a>
