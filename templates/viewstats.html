@@ -3,10 +3,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <head>
-    <title>View stats</title>
+    <title>Yout stats!</title>
     <style>
         body {
             background-color: #252422;
+        }
+
+        .img {
+            width: 300px;
         }
 
         .options-box {
@@ -19,17 +23,16 @@
         }
 
         .button {
-                background-color: #EB5E28;
-                width: 100%;
-                color: #fff;
-                font-weight: bold;
-                padding: 10px 20px;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                font-size: 14px;
-                transition: background-color 0.3s, color 0.3s;
-            }
+            background-color: #EB5E28;
+            color: #fff;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s, color 0.3s;
+        }
 
         .button:hover { /* changes to this background color and text color on hover */
             background-color: #252422;
@@ -63,7 +66,7 @@
             text-align: center;
         }
 
-        .characterCard
+        .statsCard
         {
             max-width: fit-content;
             margin-left: auto;
@@ -73,19 +76,16 @@
     </style>
 </head>
 <body>
-    <div class="options-box">
-        <h3>Select stat:</h3>
-
-        <form method="POST" action="/viewstats">
-            <select name=stats method="GET" action="/viewstats">
-                {% for stats in stats %}
-                <option value= "{{stats}}" SELECTED>{{stats.statName}}</option>"
-                {% endfor %}
-            </select>
-            <input type="submit" class="button" value ="View or edit stats">
-
-            
-        </form>
-        <a href="/dashboard"><button class="button">return to home</button></a>
+    <div class="statsCard">
+        {% for stats in stats %}
+            <h1>{{ stats.statName }}</h1>
+            </h2>{{ stats.statNumericValue }}</h2><br>  
+            <a href='/editstats/{{stats.id}}'><button class = "button" >edit stat</button></a>
+            <a href='/removestats/{{stats.id }}'><button class="button">remove stat</button></a> <br>
+            {% endfor %}
+            <br>
+            <br>
+            <br><a href="/characters"><button class="button">Go back</button></a>
+    </div>
 </body>
 </html>

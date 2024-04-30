@@ -293,42 +293,48 @@ def adduniquefields():
           return redirect(url_for('characters'))
     return render_template('adduniquefield.html', characters = characters)
 
+@app.route("/removestats/<int:id>", methods=['POST', 'GET'])
+@login_required
+def removestats(id):
+    obj = Stats.query.filter_by(id=id).one()
+    db.session.delete(obj)
+    db.session.commit()
+
+    return redirect(url_for('characters'))
+
 @app.route('/viewstats/<int:id>', methods=['GET', 'POST']) #to view and edit stats
 @login_required
 def viewstats(id):
-    session['char'] = id
+    session['viewstat'] = id
 
-    curStats = Stats.query.filter_by(characterID=id) 
+    curStats = Stats.query.filter_by(characterID =id)
+    print(curStats)
     return render_template('viewstats.html', stats=curStats)
 
-@app.route('/viewstats/', methods=['GET', 'POST']) #to view and edit stats
+@app.route('/editstats/<int:id>', methods = ['POST', 'GET']) #get id to pass to addstats
 @login_required
-def viewstatss():
-    curStatsChar = session['char']
-    curStats = Stats.query.filter_by(characterID=curStatsChar)
-    if request.method == 'POST':
-        session['stats'] = request.form['stats']
-        return redirect(url_for('editstats'))
-    else:
-        return render_template('viewstats.html', stats=curStats)
+def editstats(id):
 
+     session['sessionstats']=id
+     getStats = Stats.query.filter_by(id=id)
 
-@app.route('/editstats', methods=['GET', 'POST'])
+     return render_template('editstats.html', stats=getStats)
+
+@app.route('/editstats/', methods = ['POST', 'GET']) #get id to pass to addstats
 @login_required
-def editstats():
-    curStats = session['stats']
-    justNum = re.search(r'\d+', curStats)
-    justNum2 = justNum.group()
-    idNum = int(justNum2)
-    idNumPass = Stats.query.filter_by(id=idNum)
+def editstatss():
+     stats = session['sessionstats']
+     getStats = Stats.query.get(stats)
 
-    if request.method == 'POST':
-         idNumPass.statName = request.form['fieldname']
-         idNumPass.statNumericValue = request.form['statvalue'] 
-         db.session.commit()        
-         return redirect(url_for('characters'))
-    else:
-        return render_template('editstats.html', stats=idNumPass)
+     if request.method == 'POST':
+          getStats.statName = request.form['fieldname']
+          getStats.statNumericValue = request.form['statvalue']
+          db.session.commit()
+          return redirect(url_for('characters'))
+
+     return render_template('editstats.html', stats=getStats)
+
+
 
 @app.route('/addstats/<int:id>', methods = ['POST', 'GET']) #get id to pass to addstats
 @login_required
@@ -350,23 +356,6 @@ def addstatss():
         db.session.commit()
         return redirect(url_for('characters'))
      return render_template('addstats.html', characters=characters)
-
-@app.route('/editcharacter/<int:id>', methods=['GET', 'POST'])
-@login_required
-def editCharacter(id):
-      character = Character.query.get(id)
-      if request.method == 'POST':
-           character.name = request.form['name']
-           character.bio  = request.form['bio']
-           if 'image'in request.files:
-                image = request.files['image']
-                if image.filename != '':
-                    image.save(os.path.join(app.config['UPLOAD_FOLDER'], image.filename))
-                    character.image = image.filename
-                db.session.commit()
-                return redirect(url_for('characters'))           
-
-      return render_template('editcharacter.html', character = character)
 
 @app.route('/editcharacter/<int:id>', methods=['GET', 'POST'])
 @login_required
