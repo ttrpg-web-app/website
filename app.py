@@ -274,6 +274,26 @@ def editstats():
         idNumPass = Stats.query.filter_by(id=idNum)
         return render_template('editstats.html', stats=idNumPass)
 
+@app.route('/addstats/<int:id>', methods = ['POST', 'GET']) #get id to pass to addstats
+@login_required
+def addstats(id):
+     session['char'] = id
+     characters = Character.query.filter_by(id=id)     
+     return render_template('addstats.html', characters=characters)
+
+@app.route('/addstats/', methods = ['POST', 'GET'])
+@login_required
+def addstatss():
+     id = session['char']
+     characters = Character.query.filter_by(id=id)
+     if request.method == 'POST':
+        statName = request.form['fieldname']
+        statNumericValue = request.form['statvalue']
+        new_stats = Stats(characterID=id, statName=statName, statNumericValue=statNumericValue)
+        db.session.add(new_stats)
+        db.session.commit()
+        return redirect(url_for('characters'))
+     return render_template('addstats.html', characters=characters)
 
 #@app.route('/adduniquefield/<int:id>', methods = ['POST', 'GET'])
 #@login_required
