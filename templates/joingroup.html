@@ -53,7 +53,7 @@
     
             .alert {
                 padding: 15px;
-                background-color: #EB5E28;
+                background-color: #d13e2e;
                 color: white;
                 border-radius: 5px;
                 margin-bottom: 15px;
@@ -64,28 +64,37 @@
         </style>
     </head>
 <body>
-    <div class="options-box">
-        <form action="/joingroup" method="post">
-            <h2>Join A Group</h2>
-            <select name="group_name" id="group_name">
-                {% for group in groups %}
-                <option value="{{ group.groupName }}">{{ group.groupName }}</option>
-                {% endfor %}
-            </select>
-            <select name="character" id="character">
-                {% for character in characters %}
-                <option value="{{ character.id }}">{{ character.name }}</option>
-                {% endfor %}
-            </select>
-            <!-- <label for="username">Username:</label><br> -->
-            <input type="submit" value="Join group" class="button">
-        </form>
-            <a href="/dashboard"><button class="button">dashboard</button></a>
-    </div>
+    {% if groups %}
+        <div class="options-box">
+            <form action="/joingroup" method="post">
+                <h2>Join A Group</h2>
+                
+                <select name="group_name" id="group_name">
+                    {% for group in groups %}
+                    <option value="{{ group.groupName }}">{{ group.groupName }}</option>
+                    {% endfor %}
+                </select>
+                <select name="character" id="character">
+                    {% for character in characters %}
+                    <option value="{{ character.id }}">{{ character.name }}</option>
+                    {% endfor %}
+                </select>
+                <!-- <label for="username">Username:</label><br> -->
+                <input type="submit" value="Join group" class="button">
+            </form>
+        </div>
+    {% else %}
+        <div class="alert">
+            <p style="text-align:center; font-weight: bold;">There are no groups to join.</p>
+        </div>
+    {% endif %}
     {% if error %}
     <div class="alert">
         <p style="text-align:center; font-weight: bold;">{{ error }}</p>
     </div>
     {% endif %}
+    <div class="options-box">
+        <a href="/dashboard"><button class="button">dashboard</button></a>
+    </div>
 </body>
 </html>

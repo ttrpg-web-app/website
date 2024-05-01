@@ -219,19 +219,29 @@ def addgroup():
 @login_required
 def joingroup():
      if request.method == 'POST':
-          nameOfGroup = request.form['group_name']
-          character = request.form['character']
-          groupQuery = Group.query.filter_by(groupName=nameOfGroup).first()
-          groupID = groupQuery.id
-          accountID = current_user.id
-          new_player = Player(groupID = groupID, accountID = accountID, characterID = character)
-          db.session.add(new_player) #add new group to db
-          db.session.commit()
+          
+          username = session['username']
+          user = Account.query.filter_by(username=username).first()
+          existing_character = Character.query.filter_by(accountID=user.id).first()
+          if not existing_character:
+            error = "You need a character to join a group."
+            groups = Group.query.all()
+            return render_template('joingroup.html', error=error, groups=groups)
+          else:
+            nameOfGroup = request.form['group_name']
+            character = request.form['character']
+            groupQuery = Group.query.filter_by(groupName=nameOfGroup).first()
+            groupID = groupQuery.id
+            accountID = current_user.id
+            new_player = Player(groupID = groupID, accountID = accountID, characterID = character)
+            db.session.add(new_player) #add new group to db
+            db.session.commit()
           return redirect(url_for('dashboard'))
 
      else:
         characters = Character.query.filter_by(accountID=current_user.id)
         groups = Group.query.all()
+        # groupamt = groups.count()
         return render_template('joingroup.html', groups = groups, characters=characters)
 
 @app.route('/uploads/<path:path>')
