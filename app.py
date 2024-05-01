@@ -243,6 +243,17 @@ def removecharacter(id):
     obj = Character.query.filter_by(id=id).one()
     db.session.delete(obj)
     db.session.commit()
+
+    stats = Stats.query.filter_by(characterID=id).all()
+    for stat in stats:
+        db.session.delete(stat)
+        db.session.commit()
+
+    ufs = UniqueField.query.filter_by(characterID=id).all()
+    for uf in ufs:
+        db.session.delete(uf)
+        db.session.commit()
+
     return redirect(url_for('characters'))
 
 @app.route("/leavegroup/<int:id>", methods=['POST', 'GET'])
