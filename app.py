@@ -70,12 +70,17 @@ def register():
         username = request.form['username']
         email = request.form['email']
         password = request.form['password'] # may want to hash the password
+        
+        existing_user = Account.query.filter_by(username=username).first()
 
-        new_account = Account(username=username, email=email, password=password)
-        db.session.add(new_account)
-        db.session.commit()
-
-        return redirect(url_for('login'))
+        if existing_user:
+            error = "Username already exists. Please choose a different username."
+            return render_template('register.html', error=error)
+        else:
+            new_account = Account(username=username, email=email, password=password)
+            db.session.add(new_account)
+            db.session.commit()
+            return redirect(url_for('login'))
     # else GET method:
     return render_template('register.html')
 
