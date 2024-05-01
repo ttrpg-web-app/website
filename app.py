@@ -70,12 +70,16 @@ def register():
         username = request.form['username']
         email = request.form['email']
         password = request.form['password'] # may want to hash the password
-
-        new_account = Account(username=username, email=email, password=password)
-        db.session.add(new_account)
-        db.session.commit()
-
-        return redirect(url_for('login'))
+        
+        existing_user = Account.query.filter_by(username=username).first()
+        if existing_user:
+            error = "Username already exists. Please choose a different username."
+            return render_template('register.html', error=error)
+        else:
+            new_account = Account(username=username, email=email, password=password)
+            db.session.add(new_account)
+            db.session.commit()
+            return redirect(url_for('login'))
     # else GET method:
     return render_template('register.html')
 
@@ -159,16 +163,19 @@ def dashboard():
         session['group'] = idNum
         # storing groupID in session ends here
 
-        return redirect(url_for('viewgroup')) # GROUP PAGE DOES NOT EXIT YET
+        return redirect(url_for('viewgroup'))
     else:
         groups = Group.query.filter_by(accountID=current_user.id)
 
         player_query = Player.query.filter_by(accountID=current_user.id).all()
         group_ids = [player.groupID for player in player_query]
         playerGroups = Group.query.filter(Group.id.in_(group_ids))
-
         
-        return render_template('dashboard.html', groups=groups, name=current_user.username, playerGroups=playerGroups) #players=playerGroups
+        
+        amtG = groups.count()
+        amtPG = playerGroups.count()
+
+        return render_template('dashboard.html', groups=groups, name=current_user.username, playerGroups=playerGroups, amtG=amtG, amtPG=amtPG) #players=playerGroups
 
 @app.route('/viewgroup')
 @login_required
@@ -187,7 +194,10 @@ def viewgroup():
     stats = Stats.query.filter(Stats.characterID.in_(character_ids)).all()
     uniqueFields = UniqueField.query.filter(UniqueField.characterID.in_(character_ids)).all()
 
-    return render_template('viewgroup.html', selectedGroup=selectedGroup, players=players, characters=characters_in_group, stats=stats, uniqueFields=uniqueFields)
+    currentUser = session['username'] #get saved username for session        
+    currentUserID = Account.query.filter_by(username=currentUser).first().id #uses saved username to find userID
+
+    return render_template('viewgroup.html', selectedGroup=selectedGroup, players=players, characters=characters_in_group, stats=stats, uniqueFields=uniqueFields, currentUserID=currentUserID)
 
 @app.route('/addgroup', methods=['GET', 'POST'])
 @login_required
@@ -240,7 +250,40 @@ def removecharacter(id):
     obj = Character.query.filter_by(id=id).one()
     db.session.delete(obj)
     db.session.commit()
+
+    stats = Stats.query.filter_by(characterID=id).all()
+    for stat in stats:
+        db.session.delete(stat)
+        db.session.commit()
+
+    ufs = UniqueField.query.filter_by(characterID=id).all()
+    for uf in ufs:
+        db.session.delete(uf)
+        db.session.commit()
+
     return redirect(url_for('characters'))
+
+@app.route("/leavegroup/<int:id>", methods=['POST', 'GET'])
+@login_required
+def leavegroup(id):
+    obj = Player.query.filter_by(id=id).one()
+    db.session.delete(obj)
+    db.session.commit()
+    return redirect(url_for('dashboard'))
+
+@app.route("/deletegroup/<int:id>", methods=['POST', 'GET'])
+@login_required
+def deletegroup(id):
+    obj = Group.query.filter_by(id=id).one()
+    db.session.delete(obj)
+    db.session.commit()
+
+    players = Player.query.filter_by(groupID=id).all()
+    for player in players:
+        db.session.delete(player)
+        db.session.commit()
+
+    return redirect(url_for('dashboard'))
 
 @app.route('/addcharacter',methods = ['POST', 'GET'] )
 @login_required
