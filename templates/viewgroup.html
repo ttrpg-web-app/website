@@ -9,7 +9,7 @@
     
             .options-box {
                 width: 300px;
-                margin: 50px auto 0 auto;
+                margin: 10px auto 0 auto;
                 padding: 20px;
                 background-color: #CCC5B9;
                 border-radius: 8px;
@@ -123,10 +123,16 @@
                             {% endif %}
                         {% endfor %}
                     </div>
-
-                    </div>
                     {% endif %}
                 {% endfor %}
+            {% endfor %}
+
+            {% for player in players %}
+                {% if currentUserID == player.accountID %}
+                    <div class="options-box">
+                        <a href='/leavegroup/{{ player.id }}'><button class="button">leave group</button></a>
+                    </div>
+                {% endif %}
             {% endfor %}
     </body>
 </html>

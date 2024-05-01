@@ -187,7 +187,10 @@ def viewgroup():
     stats = Stats.query.filter(Stats.characterID.in_(character_ids)).all()
     uniqueFields = UniqueField.query.filter(UniqueField.characterID.in_(character_ids)).all()
 
-    return render_template('viewgroup.html', selectedGroup=selectedGroup, players=players, characters=characters_in_group, stats=stats, uniqueFields=uniqueFields)
+    currentUser = session['username'] #get saved username for session        
+    currentUserID = Account.query.filter_by(username=currentUser).first().id #uses saved username to find userID
+
+    return render_template('viewgroup.html', selectedGroup=selectedGroup, players=players, characters=characters_in_group, stats=stats, uniqueFields=uniqueFields, currentUserID=currentUserID)
 
 @app.route('/addgroup', methods=['GET', 'POST'])
 @login_required
@@ -241,6 +244,14 @@ def removecharacter(id):
     db.session.delete(obj)
     db.session.commit()
     return redirect(url_for('characters'))
+
+@app.route("/leavegroup/<int:id>", methods=['POST', 'GET'])
+@login_required
+def leavegroup(id):
+    obj = Player.query.filter_by(id=id).one()
+    db.session.delete(obj)
+    db.session.commit()
+    return redirect(url_for('dashboard'))
 
 @app.route('/addcharacter',methods = ['POST', 'GET'] )
 @login_required

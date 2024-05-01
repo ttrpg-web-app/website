@@ -12,10 +12,10 @@
     <table border="1">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Password</th>
+                <th>id</th>
+                <th>username</th>
+                <th>email</th>
+                <th>password</th>
             </tr>
         </thead>
         <tbody>
@@ -34,10 +34,10 @@
     <table border="1">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>FK</th>
-                <th>Name</th>
-                <th>Details</th>
+                <th>id</th>
+                <th>accountID</th>
+                <th>groupName</th>
+                <th>groupDetails</th>
             </tr>
         </thead>
         <tbody>
@@ -56,9 +56,10 @@
     <table border="1">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>GroupID</th>
-                <th>CharacterID</th>
+                <th>id</th>
+                <th>groupID</th>
+                <th>characterID</th>
+                <th>accountID</th>
             </tr>
         </thead>
         <tbody>
@@ -67,7 +68,7 @@
                 <td>{{ player.id }}</td>
                 <td>{{ player.groupID }}</td>
                 <td>{{ player.characterID }}</td>
-                <td>{{ player.accoutnID }}</td>
+                <td>{{ player.accountID }}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -77,7 +78,7 @@
     <table border="1">
         <thead>
             <tr>
-                <th>ID</th>
+                <th>id</th>
                 <th>accountID</th>
                 <th>playerID</th>
                 <th>name</th>
@@ -103,8 +104,8 @@
     <table border="1">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>FK</th>
+                <th>id</th>
+                <th>characterID</th>
                 <th>statName</th>
                 <th>statNumericValue</th>
             </tr>
@@ -125,8 +126,8 @@
     <table border="1">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>FK</th>
+                <th>id</th>
+                <th>characterID</th>
                 <th>fieldName</th>
                 <th>details</th>
             </tr>
