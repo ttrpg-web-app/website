@@ -101,6 +101,7 @@
             <div class="center-container">
             <h2>Manage Groups</h2>
 
+            {% if amtG != 0 %}
             <h3>Owned Groups:</h3>
             <form method="POST" action="/gmview">
                 <select name=group method="GET" action="/gmview">
@@ -110,7 +111,11 @@
                 </select>
                 <input type="submit" class="button" value ="go to group">
             </form>
+            {% endif %}
+
             <a href="/addgroup"><button class="button">create new group</button></a>
+
+            {% if amtPG != 0 %}
             <h3>Joined Groups:</h3>
             <form method="POST" action="/playerview">
                 <select name=group method="GET" action="/playerview">
@@ -120,6 +125,8 @@
                 </select>
                 <input type="submit" class="button" value ="go to group">
             </form>
+            {% endif %}
+            
             <a href="/joingroup"><button class="button">join new group</button></a>
         </div>
     </body>

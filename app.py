@@ -72,7 +72,6 @@ def register():
         password = request.form['password'] # may want to hash the password
         
         existing_user = Account.query.filter_by(username=username).first()
-
         if existing_user:
             error = "Username already exists. Please choose a different username."
             return render_template('register.html', error=error)
@@ -164,16 +163,19 @@ def dashboard():
         session['group'] = idNum
         # storing groupID in session ends here
 
-        return redirect(url_for('viewgroup')) # GROUP PAGE DOES NOT EXIT YET
+        return redirect(url_for('viewgroup'))
     else:
         groups = Group.query.filter_by(accountID=current_user.id)
 
         player_query = Player.query.filter_by(accountID=current_user.id).all()
         group_ids = [player.groupID for player in player_query]
         playerGroups = Group.query.filter(Group.id.in_(group_ids))
-
         
-        return render_template('dashboard.html', groups=groups, name=current_user.username, playerGroups=playerGroups) #players=playerGroups
+        
+        amtG = groups.count()
+        amtPG = playerGroups.count()
+
+        return render_template('dashboard.html', groups=groups, name=current_user.username, playerGroups=playerGroups, amtG=amtG, amtPG=amtPG) #players=playerGroups
 
 @app.route('/viewgroup')
 @login_required
