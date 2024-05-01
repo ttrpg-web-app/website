@@ -313,13 +313,7 @@ def addcharacter():
 def adduniquefield(id):
     session['uniquefieldid'] = id
     characters = Character.query.filter_by(id=id)
-    if request.method == 'POST':
-          fieldName = request.form['unique_field_name']
-          details = request.form['unique_field_details']
-          new_uniqueField = UniqueField(characterID = id,  fieldName= fieldName, details= details)
-          db.session.add(new_uniqueField) #add new unique field to db
-          db.session.commit()
-          return redirect(url_for('characters'))
+
     return render_template('adduniquefield.html', characters = characters)
 
 @app.route('/adduniquefield/', methods = ['POST', 'GET'])
@@ -336,6 +330,46 @@ def adduniquefields():
           return redirect(url_for('characters'))
     return render_template('adduniquefield.html', characters = characters)
 
+
+@app.route('/viewuniquefields/<int:id>', methods=['GET', 'POST']) #to view and edit uniquefields
+@login_required
+def viewuniquefields(id):
+    session['viewuniquefields'] = id
+    curUniqueField = UniqueField.query.filter_by(characterID =id)
+    return render_template('viewuniquefields.html', uniquefields=curUniqueField)
+
+@app.route('/edituniquefield/<int:id>', methods = ['POST', 'GET']) #get id to pass to addstats
+@login_required
+def edituniquefield(id):
+
+     session['viewuniquefields']=id
+     getUniqueField = UniqueField.query.filter_by(id=id)
+
+     return render_template('edituniquefield.html', uniquefields=getUniqueField)
+
+@app.route('/edituniquefield/', methods = ['POST', 'GET'])
+@login_required
+def edituniquefields():
+     curUField = session['viewuniquefields']
+     getCurUField = UniqueField.query.get(curUField)
+
+     if request.method == 'POST':
+          getCurUField.fieldName = request.form['fieldname']
+          getCurUField.details = request.form['statdetails']
+          db.session.commit()
+          return redirect(url_for('characters'))
+
+     return render_template('edituniquefield.html', uniquefields=getCurUField)
+
+@app.route("/removeuniquefield/<int:id>", methods=['POST', 'GET'])
+@login_required
+def removeuniquefield(id):
+    obj = UniqueField.query.filter_by(id=id).one()
+    db.session.delete(obj)
+    db.session.commit()
+
+    return redirect(url_for('characters'))
+
 @app.route("/removestats/<int:id>", methods=['POST', 'GET'])
 @login_required
 def removestats(id):
@@ -351,7 +385,6 @@ def viewstats(id):
     session['viewstat'] = id
 
     curStats = Stats.query.filter_by(characterID =id)
-    print(curStats)
     return render_template('viewstats.html', stats=curStats)
 
 @app.route('/editstats/<int:id>', methods = ['POST', 'GET']) #get id to pass to addstats

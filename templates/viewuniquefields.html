@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <head>
-    <title>Characters</title>
+    <title>Your unique fields!</title>
     <style>
         body {
             background-color: #252422;
@@ -66,7 +66,7 @@
             text-align: center;
         }
 
-        .characterCard
+        .uniqueFieldCard
         {
             max-width: fit-content;
             margin-left: auto;
@@ -77,28 +77,15 @@
 </head>
 <body>
     <div class="options-box">
-        <div class="center-container">
-            <a href="/dashboard"><button class="button">return to dashboard</button></a>
-        </div>
-    </div>
-
-    <div class="characterCard">
-        {% for character in characters %}
-            <h1>{{ character.name }}</h1>
-            <p>{{ character.bio }}</p>
-            <img src="/uploads/{{character.image}}" alt="Image Preview" class="img">
-            <br>
-            <a href='/addstats/{{ character.id }}'><button class="button">add stats</button></a>
-            <a href='/adduniquefield/{{ character.id }}'><button class="button">add unique field</button></a>
-            <br>
-            <a href='/editcharacter/{{character.id}}'><button class = "button" > edit character</button></a>
-            <a href='/removecharacter/{{ character.id }}'><button class="button">remove character</button></a> <br>
-            <a href='/viewstats/{{ character.id }}'><button class="button">view/edit stats</button></a>
-            <a href='/viewuniquefields/{{ character.id }}'><button class="button">view/edit uniquefields</button></a>
-        {% endfor %}
+        {% for uniquefields in uniquefields %}
+            <h1>{{ uniquefields.fieldName }}</h1>
+            </h2>{{ uniquefields.details }}</h2><br>  
+            <a href='/edituniquefield/{{uniquefields.id}}'><button class = "button" >edit field</button></a>
+            <a href='/removeuniquefield/{{uniquefields.id }}'><button class="button">remove unique field</button></a> <br>
+            {% endfor %}
             <br>
             <br>
-            <br><a href="/addcharacter"><button class="button">add another character</button></a>
+            <br><a href="/characters"><button class="button">Go back</button></a>
     </div>
 </body>
 </html>

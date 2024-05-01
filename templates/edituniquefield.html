@@ -3,14 +3,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <head>
-    <title>Characters</title>
+    <title>Edit Unique Field!</title>
     <style>
         body {
             background-color: #252422;
-        }
-
-        .img {
-            width: 300px;
         }
 
         .options-box {
@@ -31,6 +27,7 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 14px;
+            width: 100%;
             transition: background-color 0.3s, color 0.3s;
         }
 
@@ -73,32 +70,24 @@
             margin-right: auto;
             background-color: #CCC5B9;
         }
-    </style>
-</head>
+        </style>
+    </head>
 <body>
     <div class="options-box">
-        <div class="center-container">
-            <a href="/dashboard"><button class="button">return to dashboard</button></a>
-        </div>
+        <form action="/edituniquefield" method="post">
+            <h2>Enter unique field details:</h2>
+            {% for uniquefields in uniquefields %}
+            <input type="text" id="fieldname" name="fieldname" value="{{uniquefields.fieldName}}"> <br>
+            <input type="text" id="statdetails" name="statdetails" value="{{uniquefields.details}}"><br><br>
+            {% endfor %}
+            <input type="submit" value="Submit" class="button">
+        </form>
+            <a href="/characters"><button class="button">Go back</button></a>
     </div>
-
-    <div class="characterCard">
-        {% for character in characters %}
-            <h1>{{ character.name }}</h1>
-            <p>{{ character.bio }}</p>
-            <img src="/uploads/{{character.image}}" alt="Image Preview" class="img">
-            <br>
-            <a href='/addstats/{{ character.id }}'><button class="button">add stats</button></a>
-            <a href='/adduniquefield/{{ character.id }}'><button class="button">add unique field</button></a>
-            <br>
-            <a href='/editcharacter/{{character.id}}'><button class = "button" > edit character</button></a>
-            <a href='/removecharacter/{{ character.id }}'><button class="button">remove character</button></a> <br>
-            <a href='/viewstats/{{ character.id }}'><button class="button">view/edit stats</button></a>
-            <a href='/viewuniquefields/{{ character.id }}'><button class="button">view/edit uniquefields</button></a>
-        {% endfor %}
-            <br>
-            <br>
-            <br><a href="/addcharacter"><button class="button">add another character</button></a>
+    {% if error %}
+    <div class="alert">
+        <p style="text-align:center; font-weight: bold;">{{ error }}</p>
     </div>
+    {% endif %}
 </body>
 </html>
