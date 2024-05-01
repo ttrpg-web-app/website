@@ -136,7 +136,13 @@
             {% endfor %}
 
             <!-- display delete group if you are the owner -->
-
+            {% for group in selectedGroup %}
+                {% if currentUserID == group.accountID %}
+                    <div class="options-box">
+                        <a href='/deletegroup/{{ group.id }}'><button class="button">delete group</button></a>
+                    </div>
+                {% endif %}
+            {% endfor %}
 
     </body>
 </html>

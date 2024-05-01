@@ -253,6 +253,20 @@ def leavegroup(id):
     db.session.commit()
     return redirect(url_for('dashboard'))
 
+@app.route("/deletegroup/<int:id>", methods=['POST', 'GET'])
+@login_required
+def deletegroup(id):
+    obj = Group.query.filter_by(id=id).one()
+    db.session.delete(obj)
+    db.session.commit()
+
+    players = Player.query.filter_by(groupID=id).all()
+    for player in players:
+        db.session.delete(player)
+        db.session.commit()
+
+    return redirect(url_for('dashboard'))
+
 @app.route('/addcharacter',methods = ['POST', 'GET'] )
 @login_required
 def addcharacter():
